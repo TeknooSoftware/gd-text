@@ -59,13 +59,18 @@ abstract class AbstractTestCase extends TestCase
         $sha1 = sha1($output = ob_get_contents());
         ob_end_clean();
 
+        self::assertNotEmpty($output);
         if (str_contains(gd_info()["GD Version"] ?? '', '2.1.0')) {
             self::assertEquals(
-                static::sha1ImageResource($name),
+                static::sha1ImageResource('2.1.0/' . $name),
+                $sha1
+            );
+        } elseif (str_contains(gd_info()["GD Version"] ?? '', '2.3.0')) {
+            self::assertEquals(
+                static::sha1ImageResource('2.3.0/' . $name),
                 $sha1
             );
         } else {
-            self::assertNotEmpty($output);
             self::markTestIncomplete('Not GD 2.1 version');
         }
     }
