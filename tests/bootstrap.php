@@ -23,46 +23,16 @@
 
 declare(strict_types=1);
 
-namespace GDText\Struct;
+defined('RUN_CLI_MODE')
+    || define('RUN_CLI_MODE', true);
 
-class Rectangle extends Point
-{
-    public function __construct(
-        int $x,
-        int $y,
-        private readonly int $width,
-        private readonly int $height
-    ) {
-        parent::__construct($x, $y);
-    }
+defined('PHPUNIT')
+    || define('PHPUNIT', true);
 
-    public function getWidth(): int
-    {
-        return $this->width;
-    }
+ini_set('memory_limit', '32M');
 
-    public function getHeight(): int
-    {
-        return $this->height;
-    }
+require_once __DIR__.'/../vendor/autoload.php';
 
-    public function getLeft(): int
-    {
-        return $this->getX();
-    }
+date_default_timezone_set('UTC');
 
-    public function getTop(): int
-    {
-        return $this->getY();
-    }
-
-    public function getRight(): int
-    {
-        return $this->getX() + $this->width;
-    }
-
-    public function getBottom(): int
-    {
-        return $this->getY() + $this->height;
-    }
-}
+error_reporting(E_ALL | E_STRICT);

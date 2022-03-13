@@ -34,7 +34,7 @@ use GDText\Enum\VerticalAlignment;
 /**
  * @covers \GDText\Box
  */
-class TextWrappingTest extends AbstractTestCase
+class TextStrokedTest extends AbstractTestCase
 {
     protected function mockBox($im)
     {
@@ -51,33 +51,14 @@ class TextWrappingTest extends AbstractTestCase
         return $box;
     }
 
-    public function testWrapWithOverflow()
+    public function testStroke()
     {
         $im = $this->openImageResource('owl_png24.png');
         $box = $this->mockBox($im);
-        $box->setTextWrapping(TextWrapping::WrapWithOverflow);
+        $box->setStrokeSize(10);
+        $box->setLineHeight(2);
         $box->draw('Owls are birds from the order Strigiformes, which includes about 200 species.');
 
-        self::assertImageEquals('test_wrap_WrapWithOverflow.png', $im);
-    }
-
-    public function testWrapWithShortText()
-    {
-        $im = $this->openImageResource('owl_png24.png');
-        $box = $this->mockBox($im);
-        $box->setTextWrapping(TextWrapping::WrapWithOverflow);
-        $box->draw('Owls are birds');
-
-        self::assertImageEquals('test_wrap_WrapWithShortText.png', $im);
-    }
-
-    public function testNoWrap()
-    {
-        $im = $this->openImageResource('owl_png24.png');
-        $box = $this->mockBox($im);
-        $box->setTextWrapping(TextWrapping::NoWrap);
-        $box->draw('Owls are birds from the order Strigiformes, which includes about 200 species.');
-
-        self::assertImageEquals('test_wrap_NoWrap.png', $im);
+        self::assertImageEquals('test_wrap_stroked.png', $im);
     }
 }

@@ -30,11 +30,12 @@ use GDText\Color;
 use GDText\Enum\HorizontalAlignment;
 use GDText\Enum\TextWrapping;
 use GDText\Enum\VerticalAlignment;
+use GDText\Struct\Rectangle;
 
 /**
  * @covers \GDText\Box
  */
-class TextWrappingTest extends AbstractTestCase
+class TextDebugTest extends AbstractTestCase
 {
     protected function mockBox($im)
     {
@@ -51,33 +52,15 @@ class TextWrappingTest extends AbstractTestCase
         return $box;
     }
 
-    public function testWrapWithOverflow()
+    public function testDebugEnable()
     {
         $im = $this->openImageResource('owl_png24.png');
         $box = $this->mockBox($im);
-        $box->setTextWrapping(TextWrapping::WrapWithOverflow);
-        $box->draw('Owls are birds from the order Strigiformes, which includes about 200 species.');
+        $box->enableDebug();
 
-        self::assertImageEquals('test_wrap_WrapWithOverflow.png', $im);
-    }
-
-    public function testWrapWithShortText()
-    {
-        $im = $this->openImageResource('owl_png24.png');
-        $box = $this->mockBox($im);
-        $box->setTextWrapping(TextWrapping::WrapWithOverflow);
-        $box->draw('Owls are birds');
-
-        self::assertImageEquals('test_wrap_WrapWithShortText.png', $im);
-    }
-
-    public function testNoWrap()
-    {
-        $im = $this->openImageResource('owl_png24.png');
-        $box = $this->mockBox($im);
-        $box->setTextWrapping(TextWrapping::NoWrap);
-        $box->draw('Owls are birds from the order Strigiformes, which includes about 200 species.');
-
-        self::assertImageEquals('test_wrap_NoWrap.png', $im);
+        self::assertInstanceOf(
+            Rectangle::class,
+            $box->draw('Owls are birds from the order Strigiformes, which includes about 200 species.')
+        );
     }
 }

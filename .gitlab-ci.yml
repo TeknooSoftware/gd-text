@@ -1,0 +1,19 @@
+before_script:
+  - make
+
+.abstract_tests:
+  image: $PHP_IMAGE:$PHP_VERSION
+  script:
+    - make test
+    - make qa
+
+test:8.1-lower:
+  extends: .abstract_tests
+  variables:
+    PHP_VERSION: '8.1'
+    DEPENDENCIES: lowest
+
+test:8.1-upper:
+  extends: .abstract_tests
+  variables:
+    PHP_VERSION: '8.1'

@@ -1,6 +1,42 @@
 <?php
 
+/*
+ * GdText.
+ *
+ * LICENSE
+ *
+ * This source file is subject to the MIT license
+ * license that are bundled with this package in the folder licences
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to richarddeloge@gmail.com so we can send you a copy immediately.
+ *
+ *
+ * @copyright   Copyright (c) EIRL Richard Déloge (richarddeloge@gmail.com)
+ * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software)
+ *
+ * @link        http://teknoo.software/imuutable Project website
+ *
+ * @license     http://teknoo.software/license/mit         MIT License
+ * @author      Richard Déloge <richarddeloge@gmail.com>
+ */
+
+declare(strict_types=1);
+
 namespace GDText;
+
+use GdImage;
+use InvalidArgumentException;
+
+use function hexdec;
+use function imagecolorallocate;
+use function imagecolorallocatealpha;
+use function imagecolorexact;
+use function imagecolorexactalpha;
+use function str_repeat;
+use function str_replace;
+use function strlen;
+use function substr;
 
 /**
  * 8-bit RGB color representation.
@@ -8,86 +44,56 @@ namespace GDText;
 class Color
 {
     /**
-     * @var int
-     */
-    protected $red;
-
-    /**
-     * @var int
-     */
-    protected $green;
-
-    /**
-     * @var int
-     */
-    protected $blue;
-
-    /**
-     * @var int|null
-     */
-    protected $alpha;
-
-    /**
      * @param int $red   Value of red component 0-255
      * @param int $green Value of green component 0-255
      * @param int $blue  Value of blue component 0-255
-     * @param int $alpha A value between 0 and 127. 0 indicates completely opaque while 127 indicates completely transparent.
+     * @param ?int $alpha A value between 0 and 127. 0 indicates completely opaque while 127 indicates completely
+     *                   transparent.
      */
-    public function __construct($red = 0, $green = 0, $blue = 0, $alpha = null)
-    {
-        $this->red = $red;
-        $this->green = $green;
-        $this->blue = $blue;
-        $this->alpha = $alpha;
+    public function __construct(
+        private int $red = 0,
+        private int $green = 0,
+        private int $blue = 0,
+        private ?int $alpha = null,
+    ) {
     }
 
     /**
      * Parses string to Color object representation.
      *
      * @param string $str String with color information, ex. #000000
-     *
-     * @return Color
-     *
-     * @todo Add parsing of CSS-like strings: rgb(), rgba(), hsl()
      */
-    public static function parseString($str)
+    public static function parseString(string $str): self
     {
         $str = str_replace('#', '', $str);
-        if (strlen($str) == 6) {
-            $r = hexdec(substr($str, 0, 2));
-            $g = hexdec(substr($str, 2, 2));
-            $b = hexdec(substr($str, 4, 2));
-        } elseif (strlen($str) == 3) {
-            $r = hexdec(str_repeat(substr($str, 0, 1), 2));
-            $g = hexdec(str_repeat(substr($str, 1, 1), 2));
-            $b = hexdec(str_repeat(substr($str, 2, 1), 2));
+        if (6 === strlen($str)) {
+            $r = (int) hexdec(substr($str, 0, 2));
+            $g = (int) hexdec(substr($str, 2, 2));
+            $b = (int) hexdec(substr($str, 4, 2));
+        } elseif (3 === strlen($str)) {
+            $r = (int) hexdec(str_repeat($str[0], 2));
+            $g = (int) hexdec(str_repeat($str[1], 2));
+            $b = (int) hexdec(str_repeat($str[2], 2));
         } else {
-            throw new \InvalidArgumentException('Unrecognized color.');
+            throw new InvalidArgumentException('Unrecognized color.');
         }
 
-        return new Color($r, $g, $b);
+        return new self($r, $g, $b);
     }
 
-    /**
-     * @param float $h Hue
-     * @param float $s Saturation
-     * @param float $l Light
-     *
-     * @return Color
-     */
-    public static function fromHsl($h, $s, $l)
+    public static function fromHsl(float $h, float $s, float $l): self
     {
-        $fromFloat = function (array $rgb) {
+        $fromFloat = static function (array $rgb) {
             foreach ($rgb as &$v) {
                 $v = (int) round($v * 255);
             }
 
-            return new Color($rgb[0], $rgb[1], $rgb[2]);
+            return new self($rgb[0], $rgb[1], $rgb[2]);
         };
 
         // If saturation is 0, the given color is grey and only
         // lightness is relevant.
-        if ($s == 0) {
+        if (0.0 === $s) {
             return $fromFloat([$l, $l, $l]);
         }
 
@@ -98,80 +104,73 @@ class Color
         $x = $chroma * (1 - abs((fmod($h_, 2)) - 1)); // Note: fmod because % (modulo) returns int value!!
         $m = $l - round($chroma / 2, 10); // Bugfix for strange float behaviour (e.g. $l=0.17 and $s=1)
 
-        if ($h_ >= 0 && $h_ < 1) {
-            $rgb = [($chroma + $m), ($x + $m), $m];
-        } elseif ($h_ >= 1 && $h_ < 2) {
-            $rgb = [($x + $m), ($chroma + $m), $m];
-        } elseif ($h_ >= 2 && $h_ < 3) {
-            $rgb = [$m, ($chroma + $m), ($x + $m)];
-        } elseif ($h_ >= 3 && $h_ < 4) {
-            $rgb = [$m, ($x + $m), ($chroma + $m)];
-        } elseif ($h_ >= 4 && $h_ < 5) {
-            $rgb = [($x + $m), $m, ($chroma + $m)];
-        } elseif ($h_ >= 5 && $h_ < 6) {
-            $rgb = [($chroma + $m), $m, ($x + $m)];
-        } else {
-            throw new \InvalidArgumentException('Invalid hue, it should be a value between 0 and 1.');
-        }
+        $rgb = match (true) {
+            ($h_ >= 0 && $h_ < 1) => [($chroma + $m), ($x + $m), $m],
+            ($h_ >= 1 && $h_ < 2) => [($x + $m), ($chroma + $m), $m],
+            ($h_ >= 2 && $h_ < 3) => [$m, ($chroma + $m), ($x + $m)],
+            ($h_ >= 3 && $h_ < 4) => [$m, ($x + $m), ($chroma + $m)],
+            ($h_ >= 4 && $h_ < 5) => [($x + $m), $m, ($chroma + $m)],
+            ($h_ >= 5 && $h_ < 6) => [($chroma + $m), $m, ($x + $m)],
+            default => throw new InvalidArgumentException('Invalid hue, it should be a value between 0 and 1.'),
+        };
 
         return $fromFloat($rgb);
     }
 
     /**
-     * @param resource $image GD image resource
-     *
-     * @return int Returns the index of the specified color+alpha in the palette of the image,
+     * @return int|false Returns the index of the specified color+alpha in the palette of the image,
      *             or index of allocated color if the color does not exist in the image's palette.
      */
-    public function getIndex($image)
+    public function getIndex(GdImage $image): int|false
     {
-        $index = $this->hasAlphaChannel()
-            ? imagecolorexactalpha(
+        if ($this->hasAlphaChannel()) {
+            $index = imagecolorexactalpha(
                 $image,
                 $this->red,
                 $this->green,
                 $this->blue,
-                $this->alpha
-            )
-            : imagecolorexact(
+                (int) $this->alpha
+            );
+        } else {
+            $index = imagecolorexact(
                 $image,
                 $this->red,
                 $this->green,
                 $this->blue
             );
+        }
 
-        if ($index !== -1) {
+        if (-1 !== $index) {
             return $index;
         }
 
-        return $this->hasAlphaChannel()
-            ? imagecolorallocatealpha(
+        if ($this->hasAlphaChannel()) {
+            return imagecolorallocatealpha(
                 $image,
                 $this->red,
                 $this->green,
                 $this->blue,
-                $this->alpha
-            )
-            : imagecolorallocate(
-                $image,
-                $this->red,
-                $this->green,
-                $this->blue
+                (int) $this->alpha
             );
+        }
+
+        return imagecolorallocate(
+            $image,
+            $this->red,
+            $this->green,
+            $this->blue
+        );
     }
 
-    /**
-     * @return bool TRUE when alpha channel is specified, FALSE otherwise
-     */
-    public function hasAlphaChannel()
+    public function hasAlphaChannel(): bool
     {
-        return $this->alpha !== null;
+        return null !== $this->alpha;
     }
 
     /**
      * @return int[]
      */
-    public function toArray()
+    public function toArray(): array
     {
         return [$this->red, $this->green, $this->blue];
     }

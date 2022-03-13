@@ -1,43 +1,44 @@
 <?php
 
+/*
+ * GdText.
+ *
+ * LICENSE
+ *
+ * This source file is subject to the MIT license
+ * license that are bundled with this package in the folder licences
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to richarddeloge@gmail.com so we can send you a copy immediately.
+ *
+ *
+ * @copyright   Copyright (c) EIRL Richard Déloge (richarddeloge@gmail.com)
+ * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software)
+ *
+ * @link        http://teknoo.software/imuutable Project website
+ *
+ * @license     http://teknoo.software/license/mit         MIT License
+ * @author      Richard Déloge <richarddeloge@gmail.com>
+ */
+
+declare(strict_types=1);
+
 namespace GDText\Struct;
 
 class Point
 {
-    /**
-     * @var int
-     */
-    private $x;
-
-    /**
-     * @var int
-     */
-    private $y;
-
-    /**
-     * Point constructor.
-     *
-     * @param int $x
-     * @param int $y
-     */
-    public function __construct($x, $y)
-    {
-        $this->x = $x;
-        $this->y = $y;
+    public function __construct(
+        private readonly int $x,
+        private readonly int $y
+    ) {
     }
 
-    /**
-     * @return int
-     */
-    public function getX()
+    public function getX(): int
     {
         return $this->x;
     }
 
-    /**
-     * @return int
-     */
-    public function getY()
+    public function getY(): int
     {
         return $this->y;
     }
