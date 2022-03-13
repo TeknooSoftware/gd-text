@@ -54,15 +54,14 @@ abstract class AbstractTestCase extends TestCase
     {
         ob_start();
         imagepng($im);
-        $sha1 = sha1($a = ob_get_contents());
+        $sha1 = sha1(ob_get_contents());
         ob_end_clean();
 
         \file_put_contents($name, $a);
 
-        self::assertTrue(true);
-        /*self::assertEquals(
+        self::assertEquals(
             static::sha1ImageResource($name),
             $sha1
-        );*/
+        );
     }
 }
