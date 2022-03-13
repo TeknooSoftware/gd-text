@@ -1,18 +1,52 @@
 {
-    "name": "pe46dro/gd-text",
-    "description": "A class drawing multiline and aligned text on pictures. Uses GD extension.",
-    "license": "MIT",
+    "name": "teknoo/gd-text",
+    "description": "A class drawing multiline and aligned text on pictures. Uses GD extension.","homepage": "http://teknoo.software/immutable",
+    "license": ["MIT"],
+    "authors": [
+        {
+            "name": "Richard Déloge",
+            "email": "richarddeloge@gmail.com",
+            "role":"Software architect, Lead developer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/TeknooSoftware/immutable/issues",
+        "source": "https://github.com/TeknooSoftware/immutable"
+    },
+    "funding": [
+        {
+            "type": "patreon",
+            "url": "https://www.patreon.com/teknoo_software"
+        },
+        {
+            "type": "github",
+            "url": "https://github.com/sponsors/TeknooSoftware"
+        }
+    ],
+    "config": {
+        "optimize-autoloader": true
+    },
     "require": {
-        "php": ">=5.3",
+        "php": "^8.1",
         "ext-gd": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "^6.2"
+        "roave/security-advisories": "dev-master",
+        "phpunit/phpunit": "^9.5.18",
+        "squizlabs/php_codesniffer": "^3.6.2",
+        "sebastian/phpcpd": "^6.0.3",
+        "phploc/phploc": "^7.0.2",
+        "phpstan/phpstan": "^1.4.9",
+        "nikic/php-parser": "^v4.13.2"
     },
+    "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
             "GDText\\": "src/",
             "GDText\\Tests\\": "tests/"
         }
+    },
+    "replace": {
+        "pe46dro/gd-text": "*"
     }
 }

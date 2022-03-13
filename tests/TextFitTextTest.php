@@ -34,7 +34,7 @@ use GDText\Enum\VerticalAlignment;
 /**
  * @covers \GDText\Box
  */
-class TextWrappingTest extends AbstractTestCase
+class TextFitTextTest extends AbstractTestCase
 {
     protected function mockBox($im)
     {
@@ -45,39 +45,37 @@ class TextWrappingTest extends AbstractTestCase
         $box->setFontFace(__DIR__.'/LinLibertine_R.ttf'); // http://www.dafont.com/franchise.font
         $box->setFontColor(new Color(255, 75, 140));
         $box->setFontSize(16);
-        $box->setBox(0, 135, imagesx($im), 70);
+        $box->setBox(0, 135, imagesx($im), 100);
         $box->setTextAlign(HorizontalAlignment::Left, VerticalAlignment::Top);
 
         return $box;
     }
 
-    public function testWrapWithOverflow()
+    public function testFitTextNoLimit()
     {
         $im = $this->openImageResource('owl_png24.png');
         $box = $this->mockBox($im);
-        $box->setTextWrapping(TextWrapping::WrapWithOverflow);
-        $box->draw('Owls are birds from the order Strigiformes, which includes about 200 species.');
+        $box->drawFitFontSize('Owls are birds');
 
-        self::assertImageEquals('test_wrap_WrapWithOverflow.png', $im);
+        self::assertImageEquals('test_wrap_fit_text_no_limit.png', $im);
     }
 
-    public function testWrapWithShortText()
+    public function testFitTextIncrease()
     {
         $im = $this->openImageResource('owl_png24.png');
         $box = $this->mockBox($im);
-        $box->setTextWrapping(TextWrapping::WrapWithOverflow);
-        $box->draw('Owls are birds');
+        $box->drawFitFontSize('Owls are birds', 1, 25, 10);
 
-        self::assertImageEquals('test_wrap_WrapWithShortText.png', $im);
+        self::assertImageEquals('test_wrap_fit_text_increase.png', $im);
     }
 
-    public function testNoWrap()
+    public function testFitTextDecrease()
     {
         $im = $this->openImageResource('owl_png24.png');
         $box = $this->mockBox($im);
-        $box->setTextWrapping(TextWrapping::NoWrap);
-        $box->draw('Owls are birds from the order Strigiformes, which includes about 200 species.');
+        $box->setBox(0, 135, imagesx($im), 10);
+        $box->drawFitFontSize('Owls are birds', 1, 25, 8);
 
-        self::assertImageEquals('test_wrap_NoWrap.png', $im);
+        self::assertImageEquals('test_wrap_fit_text_decrease.png', $im);
     }
 }

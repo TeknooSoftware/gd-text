@@ -1,10 +1,37 @@
 <?php
 
+/*
+ * GdText.
+ *
+ * LICENSE
+ *
+ * This source file is subject to the MIT license
+ * license that are bundled with this package in the folder licences
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to richarddeloge@gmail.com so we can send you a copy immediately.
+ *
+ *
+ * @copyright   Copyright (c) EIRL Richard Déloge (richarddeloge@gmail.com)
+ * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software)
+ *
+ * @link        http://teknoo.software/imuutable Project website
+ *
+ * @license     http://teknoo.software/license/mit         MIT License
+ * @author      Richard Déloge <richarddeloge@gmail.com>
+ */
+
+declare(strict_types=1);
+
 namespace GDText\Tests;
 
 use GDText\Color;
+use InvalidArgumentException;
 
-class ColorTest extends TestCase
+/**
+ * @covers \GDText\Color
+ */
+class ColorTest extends AbstractTestCase
 {
     public function testPaletteImage()
     {
@@ -13,7 +40,17 @@ class ColorTest extends TestCase
         $color = new Color(0, 0, 255);
 
         $index = $color->getIndex($im);
-        $this->assertNotEquals(-1, $index);
+        self::assertNotEquals(-1, $index);
+    }
+
+    public function testPaletteImageWithAlpha()
+    {
+        $im = $this->openImageResource('owl.gif');
+
+        $color = new Color(0, 0, 255, 50);
+
+        $index = $color->getIndex($im);
+        self::assertNotEquals(-1, $index);
     }
 
     public function testTrueColorImage()
@@ -23,18 +60,33 @@ class ColorTest extends TestCase
         $color = new Color(0, 0, 255);
 
         $index = $color->getIndex($im);
-        $this->assertNotEquals(-1, $index);
+        self::assertNotEquals(-1, $index);
 
         $im = imagecreatetruecolor(1, 1);
 
         $index = $color->getIndex($im);
-        $this->assertNotEquals(-1, $index);
+        self::assertNotEquals(-1, $index);
+    }
+
+    public function testTrueColorImageWithAlpha()
+    {
+        $im = $this->openImageResource('owl_png24.png');
+
+        $color = new Color(0, 0, 255, 50);
+
+        $index = $color->getIndex($im);
+        self::assertNotEquals(-1, $index);
+
+        $im = imagecreatetruecolor(1, 1);
+
+        $index = $color->getIndex($im);
+        self::assertNotEquals(-1, $index);
     }
 
     public function testToArray()
     {
         $color = new Color(12, 34, 56);
-        $this->assertEquals([12, 34, 56], $color->toArray());
+        self::assertEquals([12, 34, 56], $color->toArray());
     }
 
     public function testFromHsl()
@@ -50,8 +102,28 @@ class ColorTest extends TestCase
             list($hsl, $rgb) = $pair;
             $color = Color::fromHsl($hsl[0], $hsl[1], $hsl[2]);
 
-            $this->assertEquals($rgb, $color->toArray());
+            self::assertEquals($rgb, $color->toArray());
         }
+    }
+
+    public function testFromHslWithError()
+    {
+        $table = [
+            [[0.5, 0.8, 0.3], [15, 138, 138]],
+            [[0.999, 1, 1], [255, 255, 255]],
+            [[0, 0, 0], [0, 0, 0]],
+            [[338 / 360, 0.85, 0.25], [118, 10, 49]],
+        ];
+
+        foreach ($table as $pair) {
+            list($hsl, $rgb) = $pair;
+            $color = Color::fromHsl($hsl[0], $hsl[1], $hsl[2]);
+
+            self::assertEquals($rgb, $color->toArray());
+        }
+
+        $this->expectException(InvalidArgumentException::class);
+        Color::fromHsl(500, 400, 300);
     }
 
     public function testParseString()
@@ -68,7 +140,13 @@ class ColorTest extends TestCase
 
         foreach ($table as $pair) {
             $color = Color::parseString($pair[0]);
-            $this->assertEquals($pair[1], $color->toArray());
+            self::assertEquals($pair[1], $color->toArray());
         }
+    }
+
+    public function testParseStringInvalide()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        Color::parseString('oooooopp');
     }
 }

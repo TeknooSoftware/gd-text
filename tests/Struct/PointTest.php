@@ -23,46 +23,34 @@
 
 declare(strict_types=1);
 
-namespace GDText\Struct;
+namespace GDText\Tests\Struct;
 
-class Rectangle extends Point
+use GDText\Struct\Point;
+use PHPUnit\Framework\TestCase;
+
+/**
+ * @covers \GDText\Struct\Point
+ */
+class PointTest extends TestCase
 {
-    public function __construct(
-        int $x,
-        int $y,
-        private readonly int $width,
-        private readonly int $height
-    ) {
-        parent::__construct($x, $y);
+    private function buildPoint(): Point
+    {
+        return new Point(10, 20);
     }
 
-    public function getWidth(): int
+    public function testGetX()
     {
-        return $this->width;
+        self::assertEquals(
+            10,
+            $this->buildPoint()->getX()
+        );
     }
 
-    public function getHeight(): int
+    public function testGetY()
     {
-        return $this->height;
-    }
-
-    public function getLeft(): int
-    {
-        return $this->getX();
-    }
-
-    public function getTop(): int
-    {
-        return $this->getY();
-    }
-
-    public function getRight(): int
-    {
-        return $this->getX() + $this->width;
-    }
-
-    public function getBottom(): int
-    {
-        return $this->getY() + $this->height;
+        self::assertEquals(
+            20,
+            $this->buildPoint()->getY()
+        );
     }
 }

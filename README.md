@@ -1,13 +1,18 @@
-gd-text
-=======
+Teknoo Software - Website library
+=================================
 
-### Installation via Composer:
+[![Latest Stable Version](https://poser.pugx.org/teknoo/gd-text/v/stable)](https://packagist.org/packages/teknoo/gd-text)
+[![Latest Unstable Version](https://poser.pugx.org/teknoo/gd-text/v/unstable)](https://packagist.org/packages/teknoo/gd-text)
+[![Total Downloads](https://poser.pugx.org/teknoo/gd-text/downloads)](https://packagist.org/packages/teknoo/gd-text)
+[![License](https://poser.pugx.org/teknoo/gd-text/license)](https://packagist.org/packages/teknoo/gd-text)
+[![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat)](https://github.com/phpstan/phpstan)
 
-```bash
-composer require pe46dro/gd-text
-```
+Fork from [`GdText library`](https://github.com/Pe46dro/gd-text) to add texts, with some effects and alignments in
+images thanks to the `GdExtension`. 
 
-### Basic usage example
+Basic usage example
+-------------------
+
 ```php
 <?php
 require __DIR__.'/../vendor/autoload.php';
@@ -144,6 +149,25 @@ header("Content-type: image/png;");
 imagepng($im, null, 9, PNG_ALL_FILTERS);
 ```
 
+Support this project
+--------------------
+
+This project is free and will remain free, but it is developed on my personal time.
+If you like it and help me maintain it and evolve it, don't hesitate to support me on [Patreon](https://patreon.com/teknoo_software).
+Thanks :) Richard.
+
+
+Installation & Requirements
+---------------------------
+To install this library with composer, run this command :
+
+    composer require teknoo/gd-text
+
+This library requires :
+
+    * PHP 8.1+
+    * GD extension with Native TTF support
+
 Demos
 ------
 Line height demo:
@@ -165,3 +189,29 @@ Text background demo:
 Debug mode enabled demo:
 
 ![debug example](examples/debug.png)
+
+
+Credits
+-------
+Richard Déloge - <richarddeloge@gmail.com> - Lead developer.
+Teknoo Software - <https://teknoo.software>
+
+### Originals authors
+
+* [Pe46dro](https://github.com/Pe46dro/gd-text)
+* [stil](https://github.com/stil/gd-text)
+
+About Teknoo Software
+---------------------
+**Teknoo Software** is a PHP software editor, founded by Richard Déloge.
+Teknoo Software's goals : Provide to our partners and to the community a set of high quality services or software,
+sharing knowledge and skills.
+
+License
+-------
+East Website is licensed under the MIT License - see the licenses folder for details
+
+Contribute :)
+-------------
+
+You are welcome to contribute to this project. [Fork it on Github](CONTRIBUTING.md)

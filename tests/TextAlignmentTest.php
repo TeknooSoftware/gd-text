@@ -1,13 +1,39 @@
 <?php
 
+/*
+ * GdText.
+ *
+ * LICENSE
+ *
+ * This source file is subject to the MIT license
+ * license that are bundled with this package in the folder licences
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to richarddeloge@gmail.com so we can send you a copy immediately.
+ *
+ *
+ * @copyright   Copyright (c) EIRL Richard Déloge (richarddeloge@gmail.com)
+ * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software)
+ *
+ * @link        http://teknoo.software/imuutable Project website
+ *
+ * @license     http://teknoo.software/license/mit         MIT License
+ * @author      Richard Déloge <richarddeloge@gmail.com>
+ */
+
+declare(strict_types=1);
+
 namespace GDText\Tests;
 
 use GDText\Box;
 use GDText\Color;
-use GDText\HorizontalAlignment;
-use GDText\VerticalAlignment;
+use GDText\Enum\HorizontalAlignment;
+use GDText\Enum\VerticalAlignment;
 
-class TextAlignmentTest extends TestCase
+/**
+ * @covers \GDText\Box
+ */
+class TextAlignmentTest extends AbstractTestCase
 {
     protected function mockBox($im)
     {
@@ -36,7 +62,7 @@ class TextAlignmentTest extends TestCase
                 $box->setTextAlign($x, $y);
                 $box->draw('Owls are birds from the order Strigiformes, which includes about 200 species.');
 
-                $this->assertImageEquals("test_align_{$y}_{$x}.png", $im);
+                self::assertImageEquals("test_align_{$y->value}_{$x->value}.png", $im);
             }
         }
     }
