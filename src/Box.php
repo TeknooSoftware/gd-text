@@ -14,8 +14,10 @@
  *
  * @copyright   Copyright (c) EIRL Richard Déloge (richarddeloge@gmail.com)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software)
+ * @copyright   Copyright (c) Pe46dro (https://github.com/Pe46dro/gd-text) [author of v1.x]
+ * @copyright   Copyright (c) Stil (https://github.com/stil/gd-text) [author of v1.x]
  *
- * @link        http://teknoo.software/imuutable Project website
+ * @link        http://teknoo.software/gd-text Project website
  *
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richarddeloge@gmail.com>
@@ -49,6 +51,21 @@ use function min;
 use function preg_split;
 use function random_int;
 
+/**
+ * Central object to use to print text in an image. The text is localized in a box and will be adapted
+ * (wrapped, aligned, oriented, etc...) according to box's configuration. An Box object need the GdImage resource
+ * a property to be instantiated
+ *
+ * @copyright   Copyright (c) EIRL Richard Déloge (richarddeloge@gmail.com)
+ * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software)
+ * @copyright   Copyright (c) Pe46dro (https://github.com/Pe46dro/gd-text) [author of v1.x]
+ * @copyright   Copyright (c) Stil (https://github.com/stil/gd-text) [author of v1.x]
+ *
+ * @link        http://teknoo.software/gd-text Project website
+ *
+ * @license     http://teknoo.software/license/mit         MIT License
+ * @author      Richard Déloge <richarddeloge@gmail.com>
+ */
 class Box
 {
     private int $angle = 0;
@@ -85,7 +102,7 @@ class Box
     private Rectangle $box;
 
     public function __construct(
-        private GdImage $im
+        private GdImage $im,
     ) {
         $this->fontColor = new Color(0, 0, 0);
         $this->strokeColor = new Color(0, 0, 0);

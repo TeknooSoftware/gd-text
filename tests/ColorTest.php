@@ -29,6 +29,16 @@ use GDText\Color;
 use InvalidArgumentException;
 
 /**
+ * @copyright   Copyright (c) EIRL Richard Déloge (richarddeloge@gmail.com)
+ * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software)
+ * @copyright   Copyright (c) Pe46dro (https://github.com/Pe46dro/gd-text) [author of v1.x]
+ * @copyright   Copyright (c) Stil (https://github.com/stil/gd-text) [author of v1.x]
+ *
+ * @link        http://teknoo.software/gd-text Project website
+ *
+ * @license     http://teknoo.software/license/mit         MIT License
+ * @author      Richard Déloge <richarddeloge@gmail.com>
+ *
  * @covers \GDText\Color
  */
 class ColorTest extends AbstractTestCase
