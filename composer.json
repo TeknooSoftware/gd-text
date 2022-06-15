@@ -2,6 +2,13 @@
     "name": "teknoo/gd-text",
     "description": "A class drawing multiline and aligned text on pictures. Uses GD extension.","homepage": "http://teknoo.software/immutable",
     "license": ["MIT"],
+    "type": "library",
+    "keywords": [
+        "gd",
+        "text",
+        "image",
+        "draw"
+    ],
     "authors": [
         {
             "name": "Richard Déloge",
