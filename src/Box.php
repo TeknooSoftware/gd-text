@@ -102,7 +102,7 @@ class Box
     private Rectangle $box;
 
     public function __construct(
-        private GdImage $im,
+        private readonly GdImage $im,
     ) {
         $this->fontColor = new Color(0, 0, 0);
         $this->strokeColor = new Color(0, 0, 0);

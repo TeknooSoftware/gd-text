@@ -1,5 +1,10 @@
 # Teknoo Software - Gd-Text - Change Log
 
+## [2.0.1] - 2022-05-17
+### Stable Release
+- Clean code and test thanks to Rector
+- Update libs requirements
+
 ## [2.0.0] - 2022-03-10
 ### Stable Release
 - Require PHP 8.1+.

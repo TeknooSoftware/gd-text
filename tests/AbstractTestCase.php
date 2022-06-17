@@ -72,12 +72,12 @@ abstract class AbstractTestCase extends TestCase
         ob_end_clean();
 
         self::assertNotEmpty($output);
-        if (str_contains(gd_info()["GD Version"] ?? '', '2.1.0')) {
+        if (str_contains((string) (gd_info()["GD Version"] ?? ''), '2.1.0')) {
             self::assertEquals(
                 static::sha1ImageResource('2.1.0/' . $name),
                 $sha1
             );
-        } elseif (str_contains(gd_info()["GD Version"] ?? '', '2.3.0')) {
+        } elseif (str_contains((string) (gd_info()["GD Version"] ?? ''), '2.3.0')) {
             self::assertEquals(
                 static::sha1ImageResource('2.3.0/' . $name),
                 $sha1

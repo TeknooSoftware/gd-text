@@ -64,10 +64,10 @@ class Color
      *                   transparent.
      */
     public function __construct(
-        private int $red = 0,
-        private int $green = 0,
-        private int $blue = 0,
-        private ?int $alpha = null,
+        private readonly int $red = 0,
+        private readonly int $green = 0,
+        private readonly int $blue = 0,
+        private readonly ?int $alpha = null,
     ) {
     }
 

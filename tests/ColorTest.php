@@ -109,7 +109,7 @@ class ColorTest extends AbstractTestCase
         ];
 
         foreach ($table as $pair) {
-            list($hsl, $rgb) = $pair;
+            [$hsl, $rgb] = $pair;
             $color = Color::fromHsl($hsl[0], $hsl[1], $hsl[2]);
 
             self::assertEquals($rgb, $color->toArray());
@@ -126,7 +126,7 @@ class ColorTest extends AbstractTestCase
         ];
 
         foreach ($table as $pair) {
-            list($hsl, $rgb) = $pair;
+            [$hsl, $rgb] = $pair;
             $color = Color::fromHsl($hsl[0], $hsl[1], $hsl[2]);
 
             self::assertEquals($rgb, $color->toArray());
