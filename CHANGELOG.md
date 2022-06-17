@@ -1,6 +1,6 @@
 # Teknoo Software - Gd-Text - Change Log
 
-## [2.0.1] - 2022-05-17
+## [2.0.1] - 2022-06-17
 ### Stable Release
 - Clean code and test thanks to Rector
 - Update libs requirements
