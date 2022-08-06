@@ -1,6 +1,7 @@
 {
     "name": "teknoo/gd-text",
-    "description": "A class drawing multiline and aligned text on pictures. Uses GD extension.","homepage": "http://teknoo.software/immutable",
+    "description": "A class drawing multiline and aligned text on pictures. Uses GD extension.",
+    "homepage": "http://teknoo.software/gd-text",
     "license": ["MIT"],
     "type": "library",
     "keywords": [
@@ -17,8 +18,8 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/TeknooSoftware/immutable/issues",
-        "source": "https://github.com/TeknooSoftware/immutable"
+        "issues": "https://github.com/TeknooSoftware/gd-text/issues",
+        "source": "https://github.com/TeknooSoftware/gd-text"
     },
     "funding": [
         {
