@@ -45,7 +45,7 @@ use GDText\Enum\VerticalAlignment;
  */
 class TextAlignmentTest extends AbstractTestCase
 {
-    protected function mockBox($im)
+    protected function mockBox($im): \GDText\Box
     {
         imagealphablending($im, true);
         imagesavealpha($im, true);
@@ -60,7 +60,7 @@ class TextAlignmentTest extends AbstractTestCase
         return $box;
     }
 
-    public function testAlignment()
+    public function testAlignment(): void
     {
         $xList = [HorizontalAlignment::Left, HorizontalAlignment::Center, HorizontalAlignment::Right];
         $yList = [VerticalAlignment::Top, VerticalAlignment::Center, VerticalAlignment::Bottom];
@@ -72,7 +72,7 @@ class TextAlignmentTest extends AbstractTestCase
                 $box->setTextAlign($x, $y);
                 $box->draw('Owls are birds from the order Strigiformes, which includes about 200 species.');
 
-                self::assertImageEquals("test_align_{$y->value}_{$x->value}.png", $im);
+                self::assertImageEquals(sprintf('test_align_%s_%s.png', $y->value, $x->value), $im);
             }
         }
     }

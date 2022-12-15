@@ -46,7 +46,7 @@ class PointTest extends TestCase
         return new Point(10, 20);
     }
 
-    public function testGetX()
+    public function testGetX(): void
     {
         self::assertEquals(
             10,
@@ -54,7 +54,7 @@ class PointTest extends TestCase
         );
     }
 
-    public function testGetY()
+    public function testGetY(): void
     {
         self::assertEquals(
             20,

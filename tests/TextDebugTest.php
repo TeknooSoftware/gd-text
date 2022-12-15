@@ -44,7 +44,7 @@ use GDText\Struct\Rectangle;
  */
 class TextDebugTest extends AbstractTestCase
 {
-    protected function mockBox($im)
+    protected function mockBox($im): \GDText\Box
     {
         imagealphablending($im, true);
         imagesavealpha($im, true);
@@ -59,7 +59,7 @@ class TextDebugTest extends AbstractTestCase
         return $box;
     }
 
-    public function testDebugEnable()
+    public function testDebugEnable(): void
     {
         $im = $this->openImageResource('owl_png24.png');
         $box = $this->mockBox($im);

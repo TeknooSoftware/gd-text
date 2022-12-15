@@ -1,5 +1,9 @@
 # Teknoo Software - Gd-Text - Change Log
 
+## [2.0.3] - 2022-12-15
+### Stable Release
+- Some QA fixes
+
 ## [2.0.2] - 2022-07-12
 ### Stable Release
 - Fix supports with 2.3.3

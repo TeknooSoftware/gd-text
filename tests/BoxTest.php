@@ -40,10 +40,13 @@ use GDText\Color;
  * @author      Richard Déloge <richarddeloge@gmail.com>
  *
  * @covers \GDText\Box
+ * @covers \GDText\Enum\TextWrapping
+ * @covers \GDText\Enum\HorizontalAlignment
+ * @covers \GDText\Enum\VerticalAlignment
  */
 class BoxTest extends AbstractTestCase
 {
-    public function testSetStrokeColor()
+    public function testSetStrokeColor(): void
     {
         self::assertInstanceOf(
             Box::class,
@@ -52,7 +55,7 @@ class BoxTest extends AbstractTestCase
         );
     }
 
-    public function testSetStrokeSize()
+    public function testSetStrokeSize(): void
     {
         self::assertInstanceOf(
             Box::class,
@@ -61,7 +64,7 @@ class BoxTest extends AbstractTestCase
         );
     }
 
-    public function testSetAngle()
+    public function testSetAngle(): void
     {
         self::assertInstanceOf(
             Box::class,
@@ -70,7 +73,7 @@ class BoxTest extends AbstractTestCase
         );
     }
 
-    public function testSetTextShadow()
+    public function testSetTextShadow(): void
     {
         self::assertInstanceOf(
             Box::class,
@@ -79,7 +82,7 @@ class BoxTest extends AbstractTestCase
         );
     }
 
-    public function testSetLineHeight()
+    public function testSetLineHeight(): void
     {
         self::assertInstanceOf(
             Box::class,
@@ -88,7 +91,7 @@ class BoxTest extends AbstractTestCase
         );
     }
 
-    public function testSetBaseline()
+    public function testSetBaseline(): void
     {
         self::assertInstanceOf(
             Box::class,
@@ -97,7 +100,7 @@ class BoxTest extends AbstractTestCase
         );
     }
 
-    public function testEnableDebug()
+    public function testEnableDebug(): void
     {
         self::assertInstanceOf(
             Box::class,
@@ -106,7 +109,7 @@ class BoxTest extends AbstractTestCase
         );
     }
 
-    public function testDrawTextWithoutFont()
+    public function testDrawTextWithoutFont(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 

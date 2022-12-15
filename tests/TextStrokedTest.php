@@ -43,7 +43,7 @@ use GDText\Enum\VerticalAlignment;
  */
 class TextStrokedTest extends AbstractTestCase
 {
-    protected function mockBox($im)
+    protected function mockBox($im): \GDText\Box
     {
         imagealphablending($im, true);
         imagesavealpha($im, true);
@@ -58,7 +58,7 @@ class TextStrokedTest extends AbstractTestCase
         return $box;
     }
 
-    public function testStroke()
+    public function testStroke(): void
     {
         $im = $this->openImageResource('owl_png24.png');
         $box = $this->mockBox($im);

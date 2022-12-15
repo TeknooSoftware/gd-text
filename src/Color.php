@@ -96,7 +96,7 @@ class Color
 
     public static function fromHsl(float $h, float $s, float $l): self
     {
-        $fromFloat = static function (array $rgb) {
+        $fromFloat = static function (array $rgb): Color {
             foreach ($rgb as &$v) {
                 $v = (int) round($v * 255);
             }

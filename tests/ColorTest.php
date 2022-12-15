@@ -43,7 +43,7 @@ use InvalidArgumentException;
  */
 class ColorTest extends AbstractTestCase
 {
-    public function testPaletteImage()
+    public function testPaletteImage(): void
     {
         $im = $this->openImageResource('owl.gif');
 
@@ -53,7 +53,7 @@ class ColorTest extends AbstractTestCase
         self::assertNotEquals(-1, $index);
     }
 
-    public function testPaletteImageWithAlpha()
+    public function testPaletteImageWithAlpha(): void
     {
         $im = $this->openImageResource('owl.gif');
 
@@ -63,7 +63,7 @@ class ColorTest extends AbstractTestCase
         self::assertNotEquals(-1, $index);
     }
 
-    public function testTrueColorImage()
+    public function testTrueColorImage(): void
     {
         $im = $this->openImageResource('owl_png24.png');
 
@@ -78,7 +78,7 @@ class ColorTest extends AbstractTestCase
         self::assertNotEquals(-1, $index);
     }
 
-    public function testTrueColorImageWithAlpha()
+    public function testTrueColorImageWithAlpha(): void
     {
         $im = $this->openImageResource('owl_png24.png');
 
@@ -93,13 +93,13 @@ class ColorTest extends AbstractTestCase
         self::assertNotEquals(-1, $index);
     }
 
-    public function testToArray()
+    public function testToArray(): void
     {
         $color = new Color(12, 34, 56);
         self::assertEquals([12, 34, 56], $color->toArray());
     }
 
-    public function testFromHsl()
+    public function testFromHsl(): void
     {
         $table = [
             [[0.5, 0.8, 0.3], [15, 138, 138]],
@@ -116,7 +116,7 @@ class ColorTest extends AbstractTestCase
         }
     }
 
-    public function testFromHslWithError()
+    public function testFromHslWithError(): void
     {
         $table = [
             [[0.5, 0.8, 0.3], [15, 138, 138]],
@@ -136,7 +136,7 @@ class ColorTest extends AbstractTestCase
         Color::fromHsl(500, 400, 300);
     }
 
-    public function testParseString()
+    public function testParseString(): void
     {
         $table = [
             ['#000', [0, 0, 0]],
@@ -154,7 +154,7 @@ class ColorTest extends AbstractTestCase
         }
     }
 
-    public function testParseStringInvalide()
+    public function testParseStringInvalide(): void
     {
         $this->expectException(InvalidArgumentException::class);
         Color::parseString('oooooopp');

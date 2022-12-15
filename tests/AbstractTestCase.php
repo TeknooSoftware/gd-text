@@ -49,7 +49,7 @@ abstract class AbstractTestCase extends TestCase
      *
      * @return resource
      */
-    protected function openImageResource($name)
+    protected function openImageResource($name): \GdImage|bool
     {
         return imagecreatefromstring(file_get_contents(__DIR__.'/images/'.$name));
     }

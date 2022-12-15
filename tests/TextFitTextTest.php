@@ -43,7 +43,7 @@ use GDText\Enum\VerticalAlignment;
  */
 class TextFitTextTest extends AbstractTestCase
 {
-    protected function mockBox($im)
+    protected function mockBox($im): \GDText\Box
     {
         imagealphablending($im, true);
         imagesavealpha($im, true);
@@ -58,7 +58,7 @@ class TextFitTextTest extends AbstractTestCase
         return $box;
     }
 
-    public function testFitTextNoLimit()
+    public function testFitTextNoLimit(): void
     {
         $im = $this->openImageResource('owl_png24.png');
         $box = $this->mockBox($im);
@@ -67,7 +67,7 @@ class TextFitTextTest extends AbstractTestCase
         self::assertImageEquals('test_wrap_fit_text_no_limit.png', $im);
     }
 
-    public function testFitTextIncrease()
+    public function testFitTextIncrease(): void
     {
         $im = $this->openImageResource('owl_png24.png');
         $box = $this->mockBox($im);
@@ -76,7 +76,7 @@ class TextFitTextTest extends AbstractTestCase
         self::assertImageEquals('test_wrap_fit_text_increase.png', $im);
     }
 
-    public function testFitTextDecrease()
+    public function testFitTextDecrease(): void
     {
         $im = $this->openImageResource('owl_png24.png');
         $box = $this->mockBox($im);

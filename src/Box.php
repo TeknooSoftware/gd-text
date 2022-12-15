@@ -343,9 +343,10 @@ class Box
         });
 
         $n = 0;
-
-        $drawnX = $drawnY = PHP_INT_MAX;
-        $drawnH = $drawnW = 0;
+        $drawnX = PHP_INT_MAX;
+        $drawnY = PHP_INT_MAX;
+        $drawnH = 0;
+        $drawnW = 0;
 
         foreach ($lines as $line) {
             $box = $this->calculateBox($line, (string) $this->fontFace);
@@ -427,7 +428,7 @@ class Box
             $drawnW = max($drawnW, $box->getWidth());
             $drawnH += $lineHeightPx;
 
-            $n++;
+            ++$n;
         }
 
         return new Rectangle($drawnX, $drawnY, $drawnW, $drawnH);
@@ -442,12 +443,13 @@ class Box
     {
         $lines = [];
         // Split text explicitly into lines by \n, \r\n and \r
-        $explicitLines = preg_split('/\n|\r\n?/', $text);
+        $explicitLines = preg_split('#\n|\r\n?#', $text);
 
         // @codeCoverageIgnoreStart
         if (!is_iterable($explicitLines)) {
             return [$text];
         }
+
         // @codeCoverageIgnoreEnd
 
         foreach ($explicitLines as $line) {
@@ -456,7 +458,7 @@ class Box
             $line = $words[0];
             $countOfWords = count($words);
 
-            for ($i = 1; $i < $countOfWords; $i++) {
+            for ($i = 1; $i < $countOfWords; ++$i) {
                 $box = $this->calculateBox($line . ' ' . $words[$i], $fontFace);
                 if ($box->getWidth() >= $this->box->getWidth()) {
                     $lines[] = $line;
@@ -465,6 +467,7 @@ class Box
                     $line .= ' ' . $words[$i];
                 }
             }
+
             $lines[] = $line;
         }
 
@@ -504,6 +507,7 @@ class Box
         if (!is_array($borders)) {
             throw new RuntimeException('');
         }
+
         // @codeCoverageIgnoreEnd
 
         [$xLeft, $yLower, $xRight, $notUsed1, $notUsed2, $yUpper] = $borders;
@@ -522,8 +526,9 @@ class Box
         if ($size <= 0) {
             return;
         }
-        for ($c1 = $x - $size; $c1 <= $x + $size; $c1++) {
-            for ($c2 = $y - $size; $c2 <= $y + $size; $c2++) {
+
+        for ($c1 = $x - $size; $c1 <= $x + $size; ++$c1) {
+            for ($c2 = $y - $size; $c2 <= $y + $size; ++$c2) {
                 $this->drawInternal(new Point($c1, $c2), $this->strokeColor, $text, $fontFace);
             }
         }

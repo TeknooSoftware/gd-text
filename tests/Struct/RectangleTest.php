@@ -46,7 +46,7 @@ class RectangleTest extends TestCase
         return new Rectangle(10, 20, 35, 42);
     }
 
-    public function testGetX()
+    public function testGetX(): void
     {
         self::assertEquals(
             10,
@@ -54,7 +54,7 @@ class RectangleTest extends TestCase
         );
     }
 
-    public function testGetY()
+    public function testGetY(): void
     {
         self::assertEquals(
             20,
@@ -62,7 +62,7 @@ class RectangleTest extends TestCase
         );
     }
 
-    public function testGetLeft()
+    public function testGetLeft(): void
     {
         self::assertEquals(
             10,
@@ -70,7 +70,7 @@ class RectangleTest extends TestCase
         );
     }
 
-    public function testGetTop()
+    public function testGetTop(): void
     {
         self::assertEquals(
             20,
@@ -78,7 +78,7 @@ class RectangleTest extends TestCase
         );
     }
 
-    public function testGetHeight()
+    public function testGetHeight(): void
     {
         self::assertEquals(
             42,
@@ -86,7 +86,7 @@ class RectangleTest extends TestCase
         );
     }
 
-    public function testGetWidth()
+    public function testGetWidth(): void
     {
         self::assertEquals(
             35,
@@ -94,7 +94,7 @@ class RectangleTest extends TestCase
         );
     }
 
-    public function testGetRight()
+    public function testGetRight(): void
     {
         self::assertEquals(
             45,
@@ -102,7 +102,7 @@ class RectangleTest extends TestCase
         );
     }
 
-    public function testGetBottom()
+    public function testGetBottom(): void
     {
         self::assertEquals(
             62,

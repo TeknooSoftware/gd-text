@@ -43,7 +43,7 @@ use GDText\Enum\VerticalAlignment;
  */
 class TextShadowTest extends AbstractTestCase
 {
-    protected function mockBox($im)
+    protected function mockBox($im): \GDText\Box
     {
         imagealphablending($im, true);
         imagesavealpha($im, true);
@@ -58,7 +58,7 @@ class TextShadowTest extends AbstractTestCase
         return $box;
     }
 
-    public function testShadow()
+    public function testShadow(): void
     {
         $im = $this->openImageResource('owl_png24.png');
         $box = $this->mockBox($im);

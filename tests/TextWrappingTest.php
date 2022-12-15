@@ -44,7 +44,7 @@ use GDText\Enum\VerticalAlignment;
  */
 class TextWrappingTest extends AbstractTestCase
 {
-    protected function mockBox($im)
+    protected function mockBox($im): \GDText\Box
     {
         imagealphablending($im, true);
         imagesavealpha($im, true);
@@ -59,7 +59,7 @@ class TextWrappingTest extends AbstractTestCase
         return $box;
     }
 
-    public function testWrapWithOverflow()
+    public function testWrapWithOverflow(): void
     {
         $im = $this->openImageResource('owl_png24.png');
         $box = $this->mockBox($im);
@@ -69,7 +69,7 @@ class TextWrappingTest extends AbstractTestCase
         self::assertImageEquals('test_wrap_WrapWithOverflow.png', $im);
     }
 
-    public function testWrapWithShortText()
+    public function testWrapWithShortText(): void
     {
         $im = $this->openImageResource('owl_png24.png');
         $box = $this->mockBox($im);
@@ -79,7 +79,7 @@ class TextWrappingTest extends AbstractTestCase
         self::assertImageEquals('test_wrap_WrapWithShortText.png', $im);
     }
 
-    public function testNoWrap()
+    public function testNoWrap(): void
     {
         $im = $this->openImageResource('owl_png24.png');
         $box = $this->mockBox($im);
