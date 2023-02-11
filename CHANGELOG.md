@@ -1,5 +1,9 @@
 # Teknoo Software - Gd-Text - Change Log
 
+## [2.0.5] - 2023-02-11
+### Stable Release
+- Remove phpcpd and upgrade phpunit.xml
+
 ## [2.0.4] - 2023-02-03
 ### Stable Release
 - Update dev libs to support PHPUnit 10 and remove unused phploc
