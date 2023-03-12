@@ -113,17 +113,17 @@ class Color
         // Else calculate r, g, b according to hue.
         // Check http://en.wikipedia.org/wiki/HSL_and_HSV#From_HSL for details
         $chroma = (1 - abs(2 * $l - 1)) * $s;
-        $h_ = $h * 6;
-        $x = $chroma * (1 - abs((fmod($h_, 2)) - 1)); // Note: fmod because % (modulo) returns int value!!
+        $h2 = $h * 6;
+        $x = $chroma * (1 - abs((fmod($h2, 2)) - 1)); // Note: fmod because % (modulo) returns int value!!
         $m = $l - round($chroma / 2, 10); // Bugfix for strange float behaviour (e.g. $l=0.17 and $s=1)
 
         $rgb = match (true) {
-            ($h_ >= 0 && $h_ < 1) => [($chroma + $m), ($x + $m), $m],
-            ($h_ >= 1 && $h_ < 2) => [($x + $m), ($chroma + $m), $m],
-            ($h_ >= 2 && $h_ < 3) => [$m, ($chroma + $m), ($x + $m)],
-            ($h_ >= 3 && $h_ < 4) => [$m, ($x + $m), ($chroma + $m)],
-            ($h_ >= 4 && $h_ < 5) => [($x + $m), $m, ($chroma + $m)],
-            ($h_ >= 5 && $h_ < 6) => [($chroma + $m), $m, ($x + $m)],
+            ($h2 >= 0 && $h2 < 1) => [($chroma + $m), ($x + $m), $m],
+            ($h2 >= 1 && $h2 < 2) => [($x + $m), ($chroma + $m), $m],
+            ($h2 >= 2 && $h2 < 3) => [$m, ($chroma + $m), ($x + $m)],
+            ($h2 >= 3 && $h2 < 4) => [$m, ($x + $m), ($chroma + $m)],
+            ($h2 >= 4 && $h2 < 5) => [($x + $m), $m, ($chroma + $m)],
+            ($h2 >= 5 && $h2 < 6) => [($chroma + $m), $m, ($x + $m)],
             default => throw new InvalidArgumentException('Invalid hue, it should be a value between 0 and 1.'),
         };
 

@@ -1,5 +1,9 @@
 # Teknoo Software - Gd-Text - Change Log
 
+## [2.0.6] - 2023-03-12
+### Stable Release
+- Q/A
+
 ## [2.0.5] - 2023-02-11
 ### Stable Release
 - Remove phpcpd and upgrade phpunit.xml

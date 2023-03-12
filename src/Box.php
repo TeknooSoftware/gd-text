@@ -32,6 +32,7 @@ use GdImage;
 use GDText\Enum\HorizontalAlignment;
 use GDText\Enum\TextWrapping;
 use GDText\Enum\VerticalAlignment;
+use GDText\Exception\NoBoxException;
 use GDText\Struct\Point;
 use GDText\Struct\Rectangle;
 use InvalidArgumentException;
@@ -505,12 +506,12 @@ class Box
 
         // @codeCoverageIgnoreStart
         if (!is_array($borders)) {
-            throw new RuntimeException('');
+            throw new NoBoxException('Error in imagettfbbox process, no box generated');
         }
 
         // @codeCoverageIgnoreEnd
 
-        [$xLeft, $yLower, $xRight, $notUsed1, $notUsed2, $yUpper] = $borders;
+        [$xLeft, $yLower, $xRight,,, $yUpper] = $borders;
 
         return new Rectangle(
             $xLeft,
