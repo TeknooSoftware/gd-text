@@ -1,5 +1,11 @@
 # Teknoo Software - Gd-Text - Change Log
 
+## [2.0.7] - 2023-04-16
+### Stable Release
+- Update dev lib requirements
+- Support PHPUnit 10.1+
+- Migrate phpunit.xml
+
 ## [2.0.6] - 2023-03-12
 ### Stable Release
 - Q/A
