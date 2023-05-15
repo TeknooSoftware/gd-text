@@ -190,23 +190,18 @@ Debug mode enabled demo:
 
 ![debug example](examples/debug.png)
 
-
-Credits
+  Credits
 -------
-Richard Déloge - <richard@teknoo.software> - Lead developer.
-Teknoo Software - <https://teknoo.software>
-
-### Originals authors
-
-* [Pe46dro](https://github.com/Pe46dro/gd-text)
-* [stil](https://github.com/stil/gd-text)
+EIRL Richard Déloge - <https://deloge.io> - Lead developer.
+SASU Teknoo Software - <https://teknoo.software>
+Original author: [Pe46dro](https://github.com/Pe46dro/gd-text)
+Original author: [stil](https://github.com/stil/gd-text)
 
 About Teknoo Software
 ---------------------
-**Teknoo Software** is a PHP software editor, founded by Richard Déloge.
+**Teknoo Software** is a PHP software editor, founded by Richard Déloge, as part of EIRL Richard Déloge.
 Teknoo Software's goals : Provide to our partners and to the community a set of high quality services or software,
 sharing knowledge and skills.
-
 License
 -------
 East Website is licensed under the MIT License - see the licenses folder for details
