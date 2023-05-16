@@ -56,28 +56,28 @@ abstract class AbstractTestCase extends TestCase
      *
      * @return string
      */
-    protected static function sha1ImageResource($name)
+    protected static function sha256ImageResource($name)
     {
-        return sha1_file(__DIR__.'/images/'.$name);
+        return hash_file('sha256', __DIR__.'/images/'.$name);
     }
 
     protected static function assertImageEquals(string $name, GdImage $im)
     {
         ob_start();
         imagepng($im);
-        $sha1 = sha1($output = ob_get_contents());
+        $sha = hash('sha256', $output = ob_get_contents());
         ob_end_clean();
 
         self::assertNotEmpty($output);
         if (str_contains((string) (gd_info()["GD Version"] ?? ''), '2.1')) {
             self::assertEquals(
-                static::sha1ImageResource('2.1.0/' . $name),
-                $sha1
+                static::sha256ImageResource('2.1.0/' . $name),
+                $sha
             );
         } elseif (str_contains((string) (gd_info()["GD Version"] ?? ''), '2.3')) {
             self::assertEquals(
-                static::sha1ImageResource('2.3.0/' . $name),
-                $sha1
+                static::sha256ImageResource('2.3.0/' . $name),
+                $sha
             );
         } else {
             self::markTestIncomplete('Not GD 2.1 version');
