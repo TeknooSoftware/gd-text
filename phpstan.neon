@@ -1,6 +1,2 @@
 parameters:
     treatPhpDocTypesAsCertain: false
-    ignoreErrors:
-        -
-            message: '#alignX is never read, only written#'
-            path: src/Box.php
