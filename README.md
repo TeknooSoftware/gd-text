@@ -165,7 +165,7 @@ sharing knowledge and skills.
 
 License
 -------
-Space is licensed under the MIT License - see the licenses folder for details.
+GdText is licensed under the MIT License - see the licenses folder for details.
 
 Installation & Requirements
 ---------------------------
