@@ -1,5 +1,9 @@
 # Teknoo Software - Gd-Text - Change Log
 
+## [2.0.10] - 2023-11-29
+### Stable Release
+- Update dev lib requirements
+
 ## [2.0.9] - 2023-05-16
 ### Stable Release
 - Use sha256 instead of sha1 in test
