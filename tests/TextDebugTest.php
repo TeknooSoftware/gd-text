@@ -30,6 +30,7 @@ use GDText\Color;
 use GDText\Enum\HorizontalAlignment;
 use GDText\Enum\VerticalAlignment;
 use GDText\Struct\Rectangle;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -37,11 +38,11 @@ use GDText\Struct\Rectangle;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  *
- * @covers \GDText\Box
  */
+#[CoversClass(Box::class)]
 class TextDebugTest extends AbstractTestCase
 {
-    protected function mockBox($im): \GDText\Box
+    protected function mockBox($im): Box
     {
         imagealphablending($im, true);
         imagesavealpha($im, true);

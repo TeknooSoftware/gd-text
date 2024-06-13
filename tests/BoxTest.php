@@ -27,6 +27,10 @@ namespace GDText\Tests;
 
 use GDText\Box;
 use GDText\Color;
+use GDText\Enum\HorizontalAlignment;
+use GDText\Enum\TextWrapping;
+use GDText\Enum\VerticalAlignment;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -36,11 +40,11 @@ use GDText\Color;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  *
- * @covers \GDText\Box
- * @covers \GDText\Enum\TextWrapping
- * @covers \GDText\Enum\HorizontalAlignment
- * @covers \GDText\Enum\VerticalAlignment
  */
+#[CoversClass(VerticalAlignment::class)]
+#[CoversClass(HorizontalAlignment::class)]
+#[CoversClass(TextWrapping::class)]
+#[CoversClass(Box::class)]
 class BoxTest extends AbstractTestCase
 {
     public function testSetStrokeColor(): void

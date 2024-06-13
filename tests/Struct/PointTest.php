@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace GDText\Tests\Struct;
 
 use GDText\Struct\Point;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -34,8 +35,8 @@ use PHPUnit\Framework\TestCase;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  *
- * @covers \GDText\Struct\Point
  */
+#[CoversClass(Point::class)]
 class PointTest extends TestCase
 {
     private function buildPoint(): Point

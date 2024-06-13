@@ -27,6 +27,7 @@ namespace GDText\Tests;
 
 use GDText\Color;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -36,8 +37,8 @@ use InvalidArgumentException;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  *
- * @covers \GDText\Color
  */
+#[CoversClass(Color::class)]
 class ColorTest extends AbstractTestCase
 {
     public function testPaletteImage(): void

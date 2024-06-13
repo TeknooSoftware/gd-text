@@ -30,6 +30,7 @@ use GDText\Color;
 use GDText\Enum\HorizontalAlignment;
 use GDText\Enum\TextWrapping;
 use GDText\Enum\VerticalAlignment;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -37,8 +38,8 @@ use GDText\Enum\VerticalAlignment;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  *
- * @covers \GDText\Box
  */
+#[CoversClass(Box::class)]
 class TextWrappingTest extends AbstractTestCase
 {
     protected function mockBox($im): \GDText\Box
