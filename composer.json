@@ -38,7 +38,7 @@
         "optimize-autoloader": true
     },
     "require": {
-        "php": "^8.1",
+        "php": "^8.2",
         "ext-gd": "*"
     },
     "require-dev": {
