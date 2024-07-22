@@ -1,5 +1,10 @@
 # Teknoo Software - Gd-Text - Change Log
 
+## [2.0.11] - 2024-07-22
+### Stable Release
+- Update dev lib requirements
+- Fix issues with GD 2.3.3
+
 ## [2.0.10] - 2023-11-29
 ### Stable Release
 - Update dev lib requirements
