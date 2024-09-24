@@ -1,5 +1,9 @@
 # Teknoo Software - Gd-Text - Change Log
 
+## [2.0.12] - 2024-09-24
+### Stable Release
+- Remove deprecations about PHP 8.4
+
 ## [2.0.11] - 2024-07-22
 ### Stable Release
 - Update dev lib requirements

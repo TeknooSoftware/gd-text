@@ -237,7 +237,7 @@ class Box
         int $precision = -1,
         int $maxFontSize = -1,
         int $minFontSize = -1,
-        int &$usedFontSize = null
+        ?int &$usedFontSize = null
     ): Rectangle {
         $initialFontSize = $this->fontSize;
 
