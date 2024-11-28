@@ -1,7 +1,7 @@
 {
     "name": "teknoo/gd-text",
     "description": "A class drawing multiline and aligned text on pictures. Uses GD extension.",
-    "homepage": "http://teknoo.software/gd-text",
+    "homepage": "https://teknoo.software/libraries/gd-text",
     "license": ["MIT"],
     "type": "library",
     "keywords": [
