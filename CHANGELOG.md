@@ -1,5 +1,14 @@
 # Teknoo Software - Gd-Text - Change Log
 
+## [2.0.13] - 2025-02-07
+### Stable Release
+- Update dev lib requirements
+  - Require Symfony libraries 6.4 or 7.2
+  - Update to PHPUnit 12
+- Drop support of PHP 8.2
+  - The library stay usable with PHP 8.2, without any waranties and tests
+  - In the next major release, Support of PHP 8.2 will be dropped
+
 ## [2.0.12] - 2024-09-24
 ### Stable Release
 - Remove deprecations about PHP 8.4

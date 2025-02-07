@@ -41,9 +41,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
  * @author      Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(VerticalAlignment::class)]
-#[CoversClass(HorizontalAlignment::class)]
-#[CoversClass(TextWrapping::class)]
 #[CoversClass(Box::class)]
 class BoxTest extends AbstractTestCase
 {
