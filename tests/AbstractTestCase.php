@@ -74,11 +74,6 @@ abstract class AbstractTestCase extends TestCase
                 static::sha256ImageResource('2.1.0/' . $name),
                 $sha
             );
-        } elseif (str_contains((string)(gd_info()["GD Version"] ?? ''), '2.3.3')) {
-            self::assertEquals(
-                static::sha256ImageResource('2.3.3/' . $name),
-                $sha
-            );
         } elseif (str_contains((string)(gd_info()["GD Version"] ?? ''), '2.3')) {
             self::assertEquals(
                 static::sha256ImageResource('2.3.0/' . $name),
