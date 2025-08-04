@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -19,7 +19,7 @@
  *
  * @link        https://teknoo.software/libraries/gd-text Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -61,7 +61,7 @@ use function random_int;
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @copyright   Copyright (c) Pe46dro (https://github.com/Pe46dro/gd-text) [author of v1.x]
  * @copyright   Copyright (c) Stil (https://github.com/stil/gd-text) [author of v1.x]
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class Box
@@ -228,6 +228,7 @@ class Box
      *
      * @param string $text Text to draw. May contain newline characters.
      * @param int $precision Increment or decrement of font size. The lower this value, the slower this method.
+     * @param-out int $usedFontSize
      *
      * @return Rectangle Area that cover the drawn text
      * @throws Exception
@@ -244,7 +245,7 @@ class Box
         $usedFontSize = $this->fontSize;
         $rectangle = $this->calculate($text);
 
-        $precision = (int) abs($precision);
+        $precision = abs($precision);
 
         if ($rectangle->getHeight() > $this->box->getHeight() || $rectangle->getWidth() > $this->box->getWidth()) {
             // Decrement font size
@@ -508,6 +509,7 @@ class Box
 
         // @codeCoverageIgnoreEnd
 
+        /** @var array{int, int, int, int, int, int, int, int, int, int} $borders */
         [$xLeft, $yLower, $xRight,,, $yUpper] = $borders;
 
         return new Rectangle(
