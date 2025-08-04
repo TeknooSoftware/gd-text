@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        http://teknoo.software/imuutable Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -35,7 +35,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  *
  */
@@ -63,9 +63,6 @@ class TextDebugTest extends AbstractTestCase
         $box = $this->mockBox($im);
         $box->enableDebug();
 
-        self::assertInstanceOf(
-            Rectangle::class,
-            $box->draw('Owls are birds from the order Strigiformes, which includes about 200 species.')
-        );
+        $this->assertInstanceOf(Rectangle::class, $box->draw('Owls are birds from the order Strigiformes, which includes about 200 species.'));
     }
 }

@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        http://teknoo.software/imuutable Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -34,7 +34,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  *
  */
@@ -62,7 +62,7 @@ class TextFitTextTest extends AbstractTestCase
         $box = $this->mockBox($im);
         $box->drawFitFontSize('Owls are birds');
 
-        self::assertImageEquals('test_wrap_fit_text_no_limit.png', $im);
+        $this->assertImageEquals('test_wrap_fit_text_no_limit.png', $im);
     }
 
     public function testFitTextIncrease(): void
@@ -71,7 +71,7 @@ class TextFitTextTest extends AbstractTestCase
         $box = $this->mockBox($im);
         $box->drawFitFontSize('Owls are birds', 1, 25, 10);
 
-        self::assertImageEquals('test_wrap_fit_text_increase.png', $im);
+        $this->assertImageEquals('test_wrap_fit_text_increase.png', $im);
     }
 
     public function testFitTextDecrease(): void
@@ -81,6 +81,6 @@ class TextFitTextTest extends AbstractTestCase
         $box->setBox(0, 135, imagesx($im), 10);
         $box->drawFitFontSize('Owls are birds', 1, 25, 8);
 
-        self::assertImageEquals('test_wrap_fit_text_decrease.png', $im);
+        $this->assertImageEquals('test_wrap_fit_text_decrease.png', $im);
     }
 }

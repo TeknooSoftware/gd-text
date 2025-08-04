@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -19,7 +19,7 @@
  *
  * @link        https://teknoo.software/libraries/gd-text Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -48,17 +48,17 @@ use function substr;
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @copyright   Copyright (c) Pe46dro (https://github.com/Pe46dro/gd-text) [author of v1.x]
  * @copyright   Copyright (c) Stil (https://github.com/stil/gd-text) [author of v1.x]
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class Color
 {
     /**
-     * @param int $red   Value of red component 0-255
-     * @param int $green Value of green component 0-255
-     * @param int $blue  Value of blue component 0-255
-     * @param ?int $alpha A value between 0 and 127. 0 indicates completely opaque while 127 indicates completely
-     *                   transparent.
+     * @param int<0, 255> $red   Value of red component 0-255
+     * @param int<0, 255> $green Value of green component 0-255
+     * @param int<0, 255> $blue  Value of blue component 0-255
+     * @param ?int<0, 127> $alpha A value between 0 and 127. 0 indicates completely opaque while 127 indicates
+     *                   completely transparent.
      */
     public function __construct(
         private readonly int $red = 0,
@@ -66,6 +66,15 @@ class Color
         private readonly int $blue = 0,
         private readonly ?int $alpha = null,
     ) {
+        foreach (['red' => $this->red, 'green' => $this->green, 'blue' => $this->blue] as $name => $v) {
+            if ($v < 0 || $v > 255) {
+                throw new InvalidArgumentException("Color `$name` component must be between 0 and 255.");
+            }
+        }
+
+        if ($this->alpha < 0 || $this->alpha > 127) {
+            throw new InvalidArgumentException("Alpha component must be between 0 and 127.");
+        }
     }
 
     /**
@@ -88,16 +97,20 @@ class Color
             throw new InvalidArgumentException('Unrecognized color.');
         }
 
+        /** @var int<0, 255> $r */
+        /** @var int<0, 255> $g */
+        /** @var int<0, 255> $b */
         return new self($r, $g, $b);
     }
 
     public static function fromHsl(float $h, float $s, float $l): self
     {
         $fromFloat = static function (array $rgb): Color {
+            /** @var int[] $rgb */
             foreach ($rgb as &$v) {
                 $v = (int) round($v * 255);
             }
-
+            /** @var array<int<0, 255>> $rgb */
             return new self($rgb[0], $rgb[1], $rgb[2]);
         };
 
