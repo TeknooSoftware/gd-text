@@ -28,7 +28,7 @@ lint:
 	find ./src -name "*.php" -exec ${PHP} -l {} \; | grep "Parse error" > /dev/null && exit 1 || exit 0
 
 phpstan:
-	${PHP} vendor/bin/phpstan analyse src --level max
+	${PHP} vendor/bin/phpstan analyse
 
 phpcs:
 	${PHP} vendor/bin/phpcs --standard=PSR12 --extensions=php src/
