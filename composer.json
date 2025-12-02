@@ -43,10 +43,10 @@
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
-        "phpunit/phpunit": "^12.3",
-        "squizlabs/php_codesniffer": "^4",
-        "phpstan/phpstan": "^2.1.21",
-        "symfony/property-access": "^6.4||^7.3"
+        "phpunit/phpunit": "^12.4.5",
+        "squizlabs/php_codesniffer": "^4.0.1",
+        "phpstan/phpstan": "^2.1.32",
+        "symfony/property-access": "^6.4||^7.3||^8"
     },
     "minimum-stability": "stable",
     "autoload": {
