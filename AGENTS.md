@@ -28,6 +28,6 @@ GD-text is a PHP library designed to add text to images with various effects (st
   - Visual regression assets (`images/` directories containing reference PNGs).
 
 ## Development & Verification
-- **Unit Testing**: All changes must be verified with `vendor/bin/phpunit`.
+- **Unit Testing**: All changes must be verified with `make test`.
 - **Visual Regression**: Since this library handles graphical rendering, any changes to drawing logic must be verified against existing reference images in `tests/images/`.
-- **Static Analysis**: Ensure no errors are introduced in PHPStan or Rector checks.
+- **Static Analysis**: Ensure no errors are introduced by running `make qa`.
