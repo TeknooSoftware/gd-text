@@ -46,7 +46,7 @@
         "phpunit/phpunit": "^13",
         "squizlabs/php_codesniffer": "^4.0.1",
         "phpstan/phpstan": "^2.1.38",
-        "symfony/property-access": "^6.4||^7.4||^8"
+        "symfony/property-access": "^6.4||^7.4||^8.1"
     },
     "minimum-stability": "stable",
     "autoload": {
