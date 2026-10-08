@@ -36,9 +36,9 @@ use GDText\Exception\NoBoxException;
 use GDText\Struct\Point;
 use GDText\Struct\Rectangle;
 use InvalidArgumentException;
-use RuntimeException;
 
 use function abs;
+use function array_first;
 use function ceil;
 use function count;
 use function explode;
@@ -123,6 +123,10 @@ class Box
 
     public function setFontSize(int $v): self
     {
+        if ($v < 1) {
+            throw new InvalidArgumentException('Font size must be greater than or equal to 1.');
+        }
+
         $this->fontSize = $v;
 
         return $this;
@@ -168,6 +172,10 @@ class Box
 
     public function setLineHeight(float $v): self
     {
+        if ($v <= 0) {
+            throw new InvalidArgumentException('Line height must be greater than 0.');
+        }
+
         $this->lineHeight = $v;
 
         return $this;
@@ -226,9 +234,17 @@ class Box
     /**
      * Draws the text on the picture, fitting it to the current box.
      *
+     * The font size starts from the current font size (clamped between $minFontSize and $maxFontSize). If the text
+     * fits in the box, the font size is increased step by step while the text still fits. Otherwise, it is decreased
+     * step by step until the text fits. If the text never fits, it is drawn with the minimum font size (overflow).
+     * The initial font size is restored after drawing.
+     *
      * @param string $text Text to draw. May contain newline characters.
      * @param int $precision Increment or decrement of font size. The lower this value, the slower this method.
-     * @param-out int $usedFontSize
+     *                       Must not be 0, its sign is ignored.
+     * @param int $maxFontSize Maximum font size, or -1 for no limit.
+     * @param int $minFontSize Minimum font size, or -1 for no limit (the font size is never lower than 1).
+     * @param-out int $usedFontSize The font size used to draw the text.
      *
      * @return Rectangle Area that cover the drawn text
      * @throws Exception
@@ -240,65 +256,61 @@ class Box
         int $minFontSize = -1,
         ?int &$usedFontSize = null
     ): Rectangle {
-        $initialFontSize = $this->fontSize;
-
-        $usedFontSize = $this->fontSize;
-        $rectangle = $this->calculate($text);
-
         $precision = abs($precision);
-
-        if ($rectangle->getHeight() > $this->box->getHeight() || $rectangle->getWidth() > $this->box->getWidth()) {
-            // Decrement font size
-            do {
-                $this->setFontSize($usedFontSize);
-                $rectangle = $this->calculate($text);
-
-                $usedFontSize -= $precision;
-            } while (
-                (
-                    -1 === $minFontSize
-                    || $usedFontSize > $minFontSize
-                )
-                && (
-                    $rectangle->getHeight() > $this->box->getHeight()
-                    || $rectangle->getWidth() > $this->box->getWidth()
-                )
-            );
-
-            $usedFontSize += $precision;
-        } else {
-            // Increment font size
-            do {
-                $this->setFontSize($usedFontSize);
-                $rectangle = $this->calculate($text);
-
-                $usedFontSize += $precision;
-            } while (
-                (
-                    $maxFontSize > 0
-                    && $usedFontSize < $maxFontSize
-                )
-                && $rectangle->getHeight() < $this->box->getHeight()
-                && $rectangle->getWidth() < $this->box->getWidth()
-            );
-
-            $usedFontSize -= $precision * 2;
+        if (0 === $precision) {
+            throw new InvalidArgumentException('Precision must not be 0.');
         }
 
-        $this->setFontSize($usedFontSize);
+        $initialFontSize = $this->fontSize;
+        // A text that never fits must not loop forever: the font size is never lower than 1
+        $floor = max(1, $minFontSize);
+        $ceiling = $maxFontSize > 0 ? max($floor, $maxFontSize) : PHP_INT_MAX;
+        $fontSize = min(max($initialFontSize, $floor), $ceiling);
 
-        $rectangle = $this->drawText($text, true);
+        if ($this->fitsInBox($text, $fontSize)) {
+            // Increment font size while the text still fits
+            while ($ceiling - $fontSize >= $precision && $this->fitsInBox($text, $fontSize + $precision)) {
+                $fontSize += $precision;
+            }
+        } else {
+            // Decrement font size until the text fits, or the floor is reached
+            while ($fontSize > $floor) {
+                $fontSize = max($floor, $fontSize - $precision);
 
-        // Restore initial font size
-        $this->setFontSize($initialFontSize);
+                if ($this->fitsInBox($text, $fontSize)) {
+                    break;
+                }
+            }
+        }
 
-        return $rectangle;
+        $usedFontSize = $fontSize;
+        $this->setFontSize($fontSize);
+
+        try {
+            return $this->drawText($text, true);
+        } finally {
+            // Restore initial font size
+            $this->setFontSize($initialFontSize);
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function fitsInBox(string $text, int $fontSize): bool
+    {
+        $this->setFontSize($fontSize);
+        $rectangle = $this->calculate($text);
+
+        return $rectangle->getWidth() <= $this->box->getWidth()
+            && $rectangle->getHeight() <= $this->box->getHeight();
     }
 
     /**
      * Get the area that will cover the given text.
      * @throws Exception
      */
+    #[\NoDiscard('calculate() only measures the text, the returned area is the result')]
     public function calculate(string $text): Rectangle
     {
         return $this->drawText($text, false);
@@ -310,16 +322,17 @@ class Box
      */
     private function drawText(string $text, bool $draw): Rectangle
     {
-        if (null === $this->fontFace) {
+        $fontFace = $this->fontFace;
+        if (null === $fontFace) {
             throw new InvalidArgumentException('No path to font file has been specified.');
         }
 
         $lines = match ($this->textWrapping) {
             TextWrapping::NoWrap => [$text],
-            TextWrapping::WrapWithOverflow => $this->wrapTextWithOverflow($text, $this->fontFace),
+            TextWrapping::WrapWithOverflow => $this->wrapTextWithOverflow($text, $fontFace),
         };
 
-        if ($this->debug) {
+        if ($draw && $this->debug) {
             // Marks whole texbox area with color
             $this->drawFilledRectangle(
                 $this->box,
@@ -341,54 +354,64 @@ class Box
             VerticalAlignment::Top => 0,
         });
 
-        $n = 0;
+        $yShift = (int) ceil($lineHeightPx * (1 - $this->baseline));
+        $boxX = $this->box->getX();
+        $lineY = $this->box->getY() + $yAlign;
+
+        // Resolve colors' indexes once per drawing, and not once per line, per stroke pixel, etc...
+        $backgroundIndex = null;
+        $backgroundShift = 0;
+        $shadowIndex = null;
+        $strokeIndex = null;
+        $fontIndex = null;
+        if ($draw) {
+            if (null !== $this->backgroundColor) {
+                $backgroundIndex = (int) $this->backgroundColor->getIndex($this->im);
+                $backgroundShift = ($lineHeightPx - $this->fontSize)
+                    + (int) ceil((1 - $this->lineHeight) * 13 * (1 / 50 * $this->fontSize));
+            }
+
+            if (null !== $this->textShadow) {
+                $shadowIndex = (int) $this->textShadow['color']->getIndex($this->im);
+            }
+
+            if ($this->strokeSize > 0) {
+                $strokeIndex = (int) $this->strokeColor->getIndex($this->im);
+            }
+
+            $fontIndex = (int) $this->fontColor->getIndex($this->im);
+        }
+
         $drawnX = PHP_INT_MAX;
         $drawnY = PHP_INT_MAX;
         $drawnH = 0;
         $drawnW = 0;
 
         foreach ($lines as $line) {
-            $box = $this->calculateBox($line, (string) $this->fontFace);
+            $box = $this->calculateBox($line, $fontFace);
+            $lineWidth = $box->getWidth();
             $xAlign = (int) ceil(match ($this->alignX) {
-                HorizontalAlignment::Center => ($this->box->getWidth() - $box->getWidth()) / 2,
-                HorizontalAlignment::Right => $this->box->getWidth() - $box->getWidth(),
+                HorizontalAlignment::Center => ($this->box->getWidth() - $lineWidth) / 2,
+                HorizontalAlignment::Right => $this->box->getWidth() - $lineWidth,
                 HorizontalAlignment::Left => 0,
             });
 
-            $yShift = (int) ceil($lineHeightPx * (1 - $this->baseline));
-
             // current line X and Y position
-            $xMOD = $this->box->getX() + $xAlign;
-            $yMOD = $this->box->getY() + $yAlign + $yShift + ($n * $lineHeightPx);
+            $xMOD = $boxX + $xAlign;
+            $yMOD = $lineY + $yShift;
 
-            if ($draw && !empty($line) && null !== $this->backgroundColor) {
+            if (null !== $backgroundIndex && '' !== $line) {
                 // Marks whole texbox area with given background-color
-                $backgroundHeight = $this->fontSize;
-
-                $this->drawFilledRectangle(
-                    new Rectangle(
-                        $xMOD,
-                        $this->box->getY()
-                            + $yAlign
-                            + ($n * $lineHeightPx)
-                            + ($lineHeightPx - $backgroundHeight)
-                            + (int) ceil((1 - $this->lineHeight) * 13 * (1 / 50 * $this->fontSize)),
-                        $box->getWidth(),
-                        $backgroundHeight
-                    ),
-                    $this->backgroundColor
+                $this->fillRectangle(
+                    new Rectangle($xMOD, $lineY + $backgroundShift, $lineWidth, $this->fontSize),
+                    $backgroundIndex
                 );
             }
 
-            if ($this->debug) {
+            if ($draw && $this->debug) {
                 // Marks current line with color
                 $this->drawFilledRectangle(
-                    new Rectangle(
-                        $xMOD,
-                        $this->box->getY() + $yAlign + ($n * $lineHeightPx),
-                        $box->getWidth(),
-                        $lineHeightPx
-                    ),
+                    new Rectangle($xMOD, $lineY, $lineWidth, $lineHeightPx),
                     new Color(
                         random_int(1, 180),
                         random_int(1, 180),
@@ -397,37 +420,30 @@ class Box
                 );
             }
 
-            if ($draw) {
-                if (null !== $this->textShadow) {
+            if (null !== $fontIndex) {
+                if (null !== $shadowIndex && null !== $this->textShadow) {
                     $this->drawInternal(
-                        new Point(
-                            $xMOD + $this->textShadow['offset']->getX(),
-                            $yMOD + $this->textShadow['offset']->getY()
-                        ),
-                        $this->textShadow['color'],
+                        $xMOD + $this->textShadow['offset']->getX(),
+                        $yMOD + $this->textShadow['offset']->getY(),
+                        $shadowIndex,
                         $line,
-                        (string) $this->fontFace,
+                        $fontFace,
                     );
                 }
 
-                $this->strokeText($xMOD, $yMOD, $line, (string) $this->fontFace);
-                $this->drawInternal(
-                    new Point(
-                        $xMOD,
-                        $yMOD
-                    ),
-                    $this->fontColor,
-                    $line,
-                    (string) $this->fontFace,
-                );
+                if (null !== $strokeIndex) {
+                    $this->strokeText($xMOD, $yMOD, $strokeIndex, $line, $fontFace);
+                }
+
+                $this->drawInternal($xMOD, $yMOD, $fontIndex, $line, $fontFace);
             }
 
             $drawnX = min($xMOD, $drawnX);
-            $drawnY = min($this->box->getY() + $yAlign + ($n * $lineHeightPx), $drawnY);
-            $drawnW = max($drawnW, $box->getWidth());
+            $drawnY = min($lineY, $drawnY);
+            $drawnW = max($drawnW, $lineWidth);
             $drawnH += $lineHeightPx;
 
-            ++$n;
+            $lineY += $lineHeightPx;
         }
 
         return new Rectangle($drawnX, $drawnY, $drawnW, $drawnH);
@@ -454,7 +470,7 @@ class Box
         foreach ($explicitLines as $line) {
             // Check every line if it needs to be wrapped
             $words = explode(' ', $line);
-            $line = $words[0];
+            $line = array_first($words);
             $countOfWords = count($words);
 
             for ($i = 1; $i < $countOfWords; ++$i) {
@@ -480,13 +496,18 @@ class Box
 
     private function drawFilledRectangle(Rectangle $rect, Color $color): void
     {
+        $this->fillRectangle($rect, (int) $color->getIndex($this->im));
+    }
+
+    private function fillRectangle(Rectangle $rect, int $colorIndex): void
+    {
         imagefilledrectangle(
             $this->im,
             $rect->getLeft(),
             $rect->getTop(),
             $rect->getRight(),
             $rect->getBottom(),
-            (int) $color->getIndex($this->im)
+            $colorIndex
         );
     }
 
@@ -502,12 +523,9 @@ class Box
             $text
         );
 
-        // @codeCoverageIgnoreStart
         if (!is_array($borders)) {
             throw new NoBoxException('Error in imagettfbbox process, no box generated');
         }
-
-        // @codeCoverageIgnoreEnd
 
         /** @var array{int, int, int, int, int, int, int, int, int, int} $borders */
         [$xLeft, $yLower, $xRight,,, $yUpper] = $borders;
@@ -520,23 +538,23 @@ class Box
         );
     }
 
-    private function strokeText(int $x, int $y, string $text, string $fontFace): void
+    /**
+     * The caller must ensure the stroke size is positive.
+     */
+    private function strokeText(int $x, int $y, int $colorIndex, string $text, string $fontFace): void
     {
         $size = $this->strokeSize;
-        if ($size <= 0) {
-            return;
-        }
-
         for ($c1 = $x - $size; $c1 <= $x + $size; ++$c1) {
             for ($c2 = $y - $size; $c2 <= $y + $size; ++$c2) {
-                $this->drawInternal(new Point($c1, $c2), $this->strokeColor, $text, $fontFace);
+                $this->drawInternal($c1, $c2, $colorIndex, $text, $fontFace);
             }
         }
     }
 
     private function drawInternal(
-        Point $position,
-        Color $color,
+        int $x,
+        int $y,
+        int $colorIndex,
         string $text,
         string $fontFace
     ): void {
@@ -544,9 +562,9 @@ class Box
             $this->im,
             $this->getFontSizeInPoints(),
             $this->angle,
-            $position->getX(),
-            $position->getY(),
-            (int) $color->getIndex($this->im),
+            $x,
+            $y,
+            $colorIndex,
             $fontFace,
             $text
         );

@@ -58,7 +58,12 @@ abstract class AbstractTestCase extends TestCase
      */
     protected static function sha256ImageResource(string $name)
     {
-        return hash_file('sha256', __DIR__.'/images/'.$name);
+        $file = __DIR__.'/images/'.$name;
+        if (!file_exists($file)) {
+            self::markTestIncomplete("No reference image $name for this GD version");
+        }
+
+        return hash_file('sha256', $file);
     }
 
     protected function assertImageEquals(string $name, GdImage $im)

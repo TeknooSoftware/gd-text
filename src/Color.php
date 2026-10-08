@@ -31,12 +31,10 @@ use GdImage;
 use InvalidArgumentException;
 
 use function hexdec;
-use function imagecolorallocate;
-use function imagecolorallocatealpha;
-use function imagecolorexact;
-use function imagecolorexactalpha;
+use function imagecolorresolve;
+use function imagecolorresolvealpha;
+use function preg_match;
 use function str_repeat;
-use function str_replace;
 use function strlen;
 use function substr;
 
@@ -84,17 +82,19 @@ class Color
      */
     public static function parseString(string $str): self
     {
-        $str = str_replace('#', '', $str);
-        if (6 === strlen($str)) {
-            $r = (int) hexdec(substr($str, 0, 2));
-            $g = (int) hexdec(substr($str, 2, 2));
-            $b = (int) hexdec(substr($str, 4, 2));
-        } elseif (3 === strlen($str)) {
-            $r = (int) hexdec(str_repeat($str[0], 2));
-            $g = (int) hexdec(str_repeat($str[1], 2));
-            $b = (int) hexdec(str_repeat($str[2], 2));
-        } else {
+        if (1 !== preg_match('/^#?(?<hex>[0-9a-f]{3}|[0-9a-f]{6})$/i', $str, $matches)) {
             throw new InvalidArgumentException('Unrecognized color.');
+        }
+
+        $hex = $matches['hex'];
+        if (6 === strlen($hex)) {
+            $r = (int) hexdec(substr($hex, 0, 2));
+            $g = (int) hexdec(substr($hex, 2, 2));
+            $b = (int) hexdec(substr($hex, 4, 2));
+        } else {
+            $r = (int) hexdec(str_repeat($hex[0], 2));
+            $g = (int) hexdec(str_repeat($hex[1], 2));
+            $b = (int) hexdec(str_repeat($hex[2], 2));
         }
 
         /** @var int<0, 255> $r */
@@ -105,6 +105,17 @@ class Color
 
     public static function fromHsl(float $h, float $s, float $l): self
     {
+        foreach (['hue' => $h, 'saturation' => $s, 'lightness' => $l] as $name => $v) {
+            if ($v < 0 || $v > 1) {
+                throw new InvalidArgumentException("Invalid $name, it should be a value between 0 and 1.");
+            }
+        }
+
+        // A hue of 1 is the same angle as a hue of 0
+        if (1.0 === $h) {
+            $h = 0.0;
+        }
+
         $fromFloat = static function (array $rgb): Color {
             /** @var int[] $rgb */
             foreach ($rgb as &$v) {
@@ -133,42 +144,22 @@ class Color
             ($h2 >= 2 && $h2 < 3) => [$m, ($chroma + $m), ($x + $m)],
             ($h2 >= 3 && $h2 < 4) => [$m, ($x + $m), ($chroma + $m)],
             ($h2 >= 4 && $h2 < 5) => [($x + $m), $m, ($chroma + $m)],
-            ($h2 >= 5 && $h2 < 6) => [($chroma + $m), $m, ($x + $m)],
-            default => throw new InvalidArgumentException('Invalid hue, it should be a value between 0 and 1.'),
+            default => [($chroma + $m), $m, ($x + $m)], // $h2 >= 5 && $h2 < 6, the hue is already validated
         };
 
         return $fromFloat($rgb);
     }
 
     /**
-     * @return int|false Returns the index of the specified color+alpha in the palette of the image,
-     *             or index of allocated color if the color does not exist in the image's palette.
+     * Returns the index of the specified color+alpha in the palette of the image. If the color does not exist in
+     * the image's palette, it is allocated. If the palette is full, the index of the closest color is returned.
+     *
+     * @return int|false Kept as int|false for backward compatibility, but false is never returned anymore.
      */
     public function getIndex(GdImage $image): int|false
     {
         if ($this->hasAlphaChannel()) {
-            $index = imagecolorexactalpha(
-                $image,
-                $this->red,
-                $this->green,
-                $this->blue,
-                (int) $this->alpha
-            );
-        } else {
-            $index = imagecolorexact(
-                $image,
-                $this->red,
-                $this->green,
-                $this->blue
-            );
-        }
-
-        if (-1 !== $index) {
-            return $index;
-        }
-
-        if ($this->hasAlphaChannel()) {
-            return imagecolorallocatealpha(
+            return imagecolorresolvealpha(
                 $image,
                 $this->red,
                 $this->green,
@@ -177,7 +168,7 @@ class Color
             );
         }
 
-        return imagecolorallocate(
+        return imagecolorresolve(
             $image,
             $this->red,
             $this->green,
@@ -193,6 +184,7 @@ class Color
     /**
      * @return int[]
      */
+    #[\NoDiscard]
     public function toArray(): array
     {
         return [$this->red, $this->green, $this->blue];
