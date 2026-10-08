@@ -226,9 +226,17 @@ class Box
     /**
      * Draws the text on the picture, fitting it to the current box.
      *
+     * The font size starts from the current font size (clamped between $minFontSize and $maxFontSize). If the text
+     * fits in the box, the font size is increased step by step while the text still fits. Otherwise, it is decreased
+     * step by step until the text fits. If the text never fits, it is drawn with the minimum font size (overflow).
+     * The initial font size is restored after drawing.
+     *
      * @param string $text Text to draw. May contain newline characters.
      * @param int $precision Increment or decrement of font size. The lower this value, the slower this method.
-     * @param-out int $usedFontSize
+     *                       Must not be 0, its sign is ignored.
+     * @param int $maxFontSize Maximum font size, or -1 for no limit.
+     * @param int $minFontSize Minimum font size, or -1 for no limit (the font size is never lower than 1).
+     * @param-out int $usedFontSize The font size used to draw the text.
      *
      * @return Rectangle Area that cover the drawn text
      * @throws Exception
@@ -240,60 +248,54 @@ class Box
         int $minFontSize = -1,
         ?int &$usedFontSize = null
     ): Rectangle {
-        $initialFontSize = $this->fontSize;
-
-        $usedFontSize = $this->fontSize;
-        $rectangle = $this->calculate($text);
-
         $precision = abs($precision);
         if (0 === $precision) {
             throw new InvalidArgumentException('Precision must not be 0.');
         }
 
-        if ($rectangle->getHeight() > $this->box->getHeight() || $rectangle->getWidth() > $this->box->getWidth()) {
-            // Decrement font size, never below 1 (a text that never fits must not loop forever)
-            $floor = max(1, $minFontSize);
-            do {
-                $this->setFontSize($usedFontSize);
-                $rectangle = $this->calculate($text);
+        $initialFontSize = $this->fontSize;
+        // A text that never fits must not loop forever: the font size is never lower than 1
+        $floor = max(1, $minFontSize);
+        $ceiling = $maxFontSize > 0 ? max($floor, $maxFontSize) : PHP_INT_MAX;
+        $fontSize = min(max($initialFontSize, $floor), $ceiling);
 
-                $usedFontSize -= $precision;
-            } while (
-                $usedFontSize > $floor
-                && (
-                    $rectangle->getHeight() > $this->box->getHeight()
-                    || $rectangle->getWidth() > $this->box->getWidth()
-                )
-            );
-
-            $usedFontSize += $precision;
+        if ($this->fitsInBox($text, $fontSize)) {
+            // Increment font size while the text still fits
+            while ($ceiling - $fontSize >= $precision && $this->fitsInBox($text, $fontSize + $precision)) {
+                $fontSize += $precision;
+            }
         } else {
-            // Increment font size
-            do {
-                $this->setFontSize($usedFontSize);
-                $rectangle = $this->calculate($text);
+            // Decrement font size until the text fits, or the floor is reached
+            while ($fontSize > $floor) {
+                $fontSize = max($floor, $fontSize - $precision);
 
-                $usedFontSize += $precision;
-            } while (
-                (
-                    $maxFontSize > 0
-                    && $usedFontSize < $maxFontSize
-                )
-                && $rectangle->getHeight() < $this->box->getHeight()
-                && $rectangle->getWidth() < $this->box->getWidth()
-            );
-
-            $usedFontSize -= $precision * 2;
+                if ($this->fitsInBox($text, $fontSize)) {
+                    break;
+                }
+            }
         }
 
-        $this->setFontSize($usedFontSize);
+        $usedFontSize = $fontSize;
+        $this->setFontSize($fontSize);
 
-        $rectangle = $this->drawText($text, true);
+        try {
+            return $this->drawText($text, true);
+        } finally {
+            // Restore initial font size
+            $this->setFontSize($initialFontSize);
+        }
+    }
 
-        // Restore initial font size
-        $this->setFontSize($initialFontSize);
+    /**
+     * @throws Exception
+     */
+    private function fitsInBox(string $text, int $fontSize): bool
+    {
+        $this->setFontSize($fontSize);
+        $rectangle = $this->calculate($text);
 
-        return $rectangle;
+        return $rectangle->getWidth() <= $this->box->getWidth()
+            && $rectangle->getHeight() <= $this->box->getHeight();
     }
 
     /**
