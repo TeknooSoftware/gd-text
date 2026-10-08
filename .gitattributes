@@ -7,4 +7,9 @@
 .gitlab-ci.yml      export-ignore
 /ci                 export-ignore
 .gitlab-ci.yml      export-ignore
-
+/tests              export-ignore
+/AGENTS.md          export-ignore
+/CONTRIBUTING.md    export-ignore
+/Makefile           export-ignore
+/phpstan.neon       export-ignore
+/.editorconfig      export-ignore

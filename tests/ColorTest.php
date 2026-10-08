@@ -205,4 +205,109 @@ class ColorTest extends AbstractTestCase
         $this->expectException(InvalidArgumentException::class);
         Color::parseString('oooooopp');
     }
+
+    public static function provideInvalidColorStrings(): array
+    {
+        return [
+            'non hex 6 chars' => ['zzzzzz'],
+            'non hex 3 chars with hash' => ['#GGG'],
+            'hash in the middle' => ['#ab#c'],
+            'double hash' => ['##abc'],
+            'empty string' => [''],
+            'only hash' => ['#'],
+            'too short' => ['#ab'],
+            'too long' => ['#abcdefa'],
+            'spaces' => [' abc '],
+        ];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidColorStrings')]
+    public function testParseStringRejectsNonHexadecimalStrings(string $value): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        Color::parseString($value);
+    }
+
+    public function testFromHslWithHueOneIsSameAsHueZero(): void
+    {
+        $this->assertSame(
+            Color::fromHsl(0.0, 0.5, 0.5)->toArray(),
+            Color::fromHsl(1.0, 0.5, 0.5)->toArray(),
+        );
+        $this->assertSame([255, 0, 0], Color::fromHsl(1.0, 1.0, 0.5)->toArray());
+        $this->assertSame([128, 128, 128], Color::fromHsl(1.0, 0.0, 0.5)->toArray());
+    }
+
+    public static function provideInvalidHsl(): array
+    {
+        return [
+            'hue above 1' => [1.5, 0.5, 0.5, 'hue'],
+            'negative hue' => [-0.1, 0.5, 0.5, 'hue'],
+            'saturation above 1' => [0.5, 2.0, 0.5, 'saturation'],
+            'negative saturation' => [0.5, -0.5, 0.5, 'saturation'],
+            'lightness above 1' => [0.5, 0.5, 1.5, 'lightness'],
+            'negative lightness' => [0.5, 0.5, -1.0, 'lightness'],
+            'grey with lightness above 1' => [0.5, 0.0, 1.5, 'lightness'],
+        ];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidHsl')]
+    public function testFromHslRejectsOutOfRangeComponents(float $h, float $s, float $l, string $component): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/' . $component . '/i');
+        Color::fromHsl($h, $s, $l);
+    }
+
+    private function buildFullPaletteImage(): \GdImage
+    {
+        $im = imagecreate(16, 16);
+        for ($i = 0; $i < 256; ++$i) {
+            imagecolorallocate($im, $i, 0, 0);
+        }
+
+        return $im;
+    }
+
+    public function testFullPaletteImageReturnsClosestColorIndex(): void
+    {
+        $im = $this->buildFullPaletteImage();
+
+        $index = (new Color(200, 0, 0))->getIndex($im);
+        $this->assertIsInt($index);
+        $this->assertSame(['red' => 200, 'green' => 0, 'blue' => 0, 'alpha' => 0], imagecolorsforindex($im, $index));
+
+        $index = (new Color(0, 255, 0))->getIndex($im);
+        $this->assertIsInt($index);
+        $this->assertGreaterThanOrEqual(0, $index);
+    }
+
+    public function testFullPaletteImageWithAlphaReturnsClosestColorIndex(): void
+    {
+        $im = $this->buildFullPaletteImage();
+
+        $index = (new Color(0, 255, 0, 50))->getIndex($im);
+        $this->assertIsInt($index);
+        $this->assertGreaterThanOrEqual(0, $index);
+    }
+
+    public static function provideHueSectors(): array
+    {
+        // Expected values computed independently with Python's colorsys.hls_to_rgb(h, 0.5, 0.6)
+        return [
+            'sector 0 (red to yellow)' => [0.05, [204, 97, 51]],
+            'sector 1 (yellow to green)' => [0.25, [128, 204, 51]],
+            'sector 2 (green to cyan)' => [0.4, [51, 204, 112]],
+            'sector 3 (cyan to blue)' => [0.55, [51, 158, 204]],
+            'sector 4 (blue to magenta)' => [0.7, [82, 51, 204]],
+            'sector 5 (magenta to red)' => [0.9, [204, 51, 143]],
+            'sector 5 middle' => [5.5 / 6, [204, 51, 128]],
+        ];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideHueSectors')]
+    public function testFromHslCoversAllHueSectors(float $hue, array $expected): void
+    {
+        $this->assertSame($expected, Color::fromHsl($hue, 0.6, 0.5)->toArray());
+    }
 }

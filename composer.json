@@ -38,15 +38,14 @@
         "optimize-autoloader": true
     },
     "require": {
-        "php": "^8.4",
+        "php": "^8.5",
         "ext-gd": "*"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
         "phpunit/phpunit": "^13",
         "squizlabs/php_codesniffer": "^4.0.1",
-        "phpstan/phpstan": "^2.1.38",
-        "symfony/property-access": "^6.4||^7.4||^8.1"
+        "phpstan/phpstan": "^2.1.38"
     },
     "minimum-stability": "stable",
     "autoload": {

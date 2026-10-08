@@ -114,4 +114,103 @@ class BoxTest extends AbstractTestCase
         new Box($this->openImageResource('owl_png24.png'))
             ->draw('foo');
     }
+
+    public function testDrawOnFullPaletteImage(): void
+    {
+        $im = imagecreate(200, 60);
+        $background = imagecolorallocate($im, 255, 255, 255);
+        for ($i = 1; $i < 256; ++$i) {
+            imagecolorallocate($im, 255, 255, 255 - $i);
+        }
+
+        $box = new Box($im);
+        $box->setFontFace(__DIR__ . '/LinLibertine_R.ttf');
+        $box->setFontSize(40);
+        $box->setFontColor(new Color(0, 0, 0));
+        $box->setBox(0, 0, 200, 60);
+        $rectangle = $box->draw('Owl');
+
+        $drawn = 0;
+        for ($x = $rectangle->getLeft(); $x < $rectangle->getRight(); ++$x) {
+            for ($y = $rectangle->getTop(); $y < $rectangle->getBottom(); ++$y) {
+                if (imagecolorat($im, $x, $y) !== $background) {
+                    ++$drawn;
+                }
+            }
+        }
+
+        $this->assertGreaterThan(0, $drawn, 'Text must be drawn with the closest color, not with palette index 0');
+    }
+
+    public function testSetFontSize(): void
+    {
+        $this->assertInstanceOf(
+            Box::class,
+            new Box($this->openImageResource('owl_png24.png'))
+                ->setFontSize(1)
+        );
+    }
+
+    public static function provideInvalidFontSizes(): array
+    {
+        return [
+            'zero' => [0],
+            'negative' => [-5],
+        ];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidFontSizes')]
+    public function testSetFontSizeRejectsNonPositiveValues(int $size): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        new Box($this->openImageResource('owl_png24.png'))
+            ->setFontSize($size);
+    }
+
+    public static function provideInvalidLineHeights(): array
+    {
+        return [
+            'zero' => [0.0],
+            'negative' => [-1.0],
+        ];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidLineHeights')]
+    public function testSetLineHeightRejectsNonPositiveValues(float $lineHeight): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        new Box($this->openImageResource('owl_png24.png'))
+            ->setLineHeight($lineHeight);
+    }
+
+    public function testSetLineHeightAcceptsSmallPositiveValues(): void
+    {
+        $this->assertInstanceOf(
+            Box::class,
+            new Box($this->openImageResource('owl_png24.png'))
+                ->setLineHeight(0.5)
+        );
+    }
+
+    public function testCalculateIsMarkedNoDiscard(): void
+    {
+        $attributes = new \ReflectionMethod(Box::class, 'calculate')->getAttributes(\NoDiscard::class);
+
+        $this->assertCount(1, $attributes);
+    }
+
+    public function testDrawWithMissingFontFileThrowsNoBoxException(): void
+    {
+        $box = new Box($this->openImageResource('owl_png24.png'))
+            ->setFontFace(__DIR__ . '/missing-font.ttf');
+
+        // GD emits a warning before returning false, it is not the subject of this test
+        set_error_handler(static fn (): bool => true, E_WARNING);
+        try {
+            $this->expectException(\GDText\Exception\NoBoxException::class);
+            $box->draw('foo');
+        } finally {
+            restore_error_handler();
+        }
+    }
 }
