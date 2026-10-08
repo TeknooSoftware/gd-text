@@ -92,4 +92,56 @@ class TextFitTextTest extends AbstractTestCase
         $this->expectException(\InvalidArgumentException::class);
         $box->drawFitFontSize('Owls are birds', 0, 40, 5);
     }
+
+    public function testFitTextThatNeverFitsWithoutMinimumStopsAtPositiveFontSize(): void
+    {
+        $im = $this->openImageResource('owl_png24.png');
+        $box = $this->mockBox($im);
+        $box->setBox(0, 0, 1, 1);
+
+        $usedFontSize = null;
+        $box->drawFitFontSize('Owls are birds from the order Strigiformes', 5, -1, -1, $usedFontSize);
+
+        $this->assertGreaterThanOrEqual(1, $usedFontSize);
+        $this->assertLessThanOrEqual(16, $usedFontSize);
+    }
+
+    public function testFitTextThatNeverFitsWithoutMinimumAndPrecisionOne(): void
+    {
+        $im = $this->openImageResource('owl_png24.png');
+        $box = $this->mockBox($im);
+        $box->setBox(0, 0, 1, 1);
+
+        $usedFontSize = null;
+        $box->drawFitFontSize('Owls are birds from the order Strigiformes', 1, -1, -1, $usedFontSize);
+
+        $this->assertGreaterThanOrEqual(1, $usedFontSize);
+        $this->assertLessThanOrEqual(16, $usedFontSize);
+    }
+
+    public function testFitTextThatNeverFitsNeverGoesBelowMinimum(): void
+    {
+        $im = $this->openImageResource('owl_png24.png');
+        $box = $this->mockBox($im);
+        $box->setBox(0, 0, 1, 1);
+
+        $usedFontSize = null;
+        $box->drawFitFontSize('Owls are birds from the order Strigiformes', 5, -1, 4, $usedFontSize);
+
+        $this->assertGreaterThanOrEqual(4, $usedFontSize);
+        $this->assertLessThanOrEqual(16, $usedFontSize);
+    }
+
+    public function testFitTextWithPrecisionLargerThanRangeNeverGoesBelowMinimum(): void
+    {
+        $im = $this->openImageResource('owl_png24.png');
+        $box = $this->mockBox($im);
+        $box->setBox(0, 0, 1, 1);
+
+        $usedFontSize = null;
+        $box->drawFitFontSize('Owls are birds', 50, -1, 8, $usedFontSize);
+
+        $this->assertGreaterThanOrEqual(8, $usedFontSize);
+        $this->assertLessThanOrEqual(16, $usedFontSize);
+    }
 }

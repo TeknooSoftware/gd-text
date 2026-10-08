@@ -251,17 +251,15 @@ class Box
         }
 
         if ($rectangle->getHeight() > $this->box->getHeight() || $rectangle->getWidth() > $this->box->getWidth()) {
-            // Decrement font size
+            // Decrement font size, never below 1 (a text that never fits must not loop forever)
+            $floor = max(1, $minFontSize);
             do {
                 $this->setFontSize($usedFontSize);
                 $rectangle = $this->calculate($text);
 
                 $usedFontSize -= $precision;
             } while (
-                (
-                    -1 === $minFontSize
-                    || $usedFontSize > $minFontSize
-                )
+                $usedFontSize > $floor
                 && (
                     $rectangle->getHeight() > $this->box->getHeight()
                     || $rectangle->getWidth() > $this->box->getWidth()
