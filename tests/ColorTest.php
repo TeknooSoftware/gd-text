@@ -290,4 +290,24 @@ class ColorTest extends AbstractTestCase
         $this->assertIsInt($index);
         $this->assertGreaterThanOrEqual(0, $index);
     }
+
+    public static function provideHueSectors(): array
+    {
+        // Expected values computed independently with Python's colorsys.hls_to_rgb(h, 0.5, 0.6)
+        return [
+            'sector 0 (red to yellow)' => [0.05, [204, 97, 51]],
+            'sector 1 (yellow to green)' => [0.25, [128, 204, 51]],
+            'sector 2 (green to cyan)' => [0.4, [51, 204, 112]],
+            'sector 3 (cyan to blue)' => [0.55, [51, 158, 204]],
+            'sector 4 (blue to magenta)' => [0.7, [82, 51, 204]],
+            'sector 5 (magenta to red)' => [0.9, [204, 51, 143]],
+            'sector 5 middle' => [5.5 / 6, [204, 51, 128]],
+        ];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideHueSectors')]
+    public function testFromHslCoversAllHueSectors(float $hue, array $expected): void
+    {
+        $this->assertSame($expected, Color::fromHsl($hue, 0.6, 0.5)->toArray());
+    }
 }

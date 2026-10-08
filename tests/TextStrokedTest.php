@@ -66,4 +66,35 @@ class TextStrokedTest extends AbstractTestCase
 
         $this->assertImageEquals('test_wrap_stroked.png', $im);
     }
+
+    private function hashImage(\GdImage $im): string
+    {
+        ob_start();
+        imagepng($im);
+
+        return hash('sha256', (string) ob_get_clean());
+    }
+
+    public static function provideNoStrokeSizes(): array
+    {
+        return [
+            'zero' => [0],
+            'negative' => [-3],
+        ];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideNoStrokeSizes')]
+    public function testNonPositiveStrokeSizeDrawsLikeNoStroke(int $size): void
+    {
+        $reference = $this->openImageResource('owl_png24.png');
+        $this->mockBox($reference)->draw('Owls are birds');
+
+        $im = $this->openImageResource('owl_png24.png');
+        $box = $this->mockBox($im);
+        $box->setStrokeSize($size);
+        $box->setStrokeColor(new Color(0, 255, 0));
+        $box->draw('Owls are birds');
+
+        $this->assertSame($this->hashImage($reference), $this->hashImage($im));
+    }
 }

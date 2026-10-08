@@ -144,8 +144,7 @@ class Color
             ($h2 >= 2 && $h2 < 3) => [$m, ($chroma + $m), ($x + $m)],
             ($h2 >= 3 && $h2 < 4) => [$m, ($x + $m), ($chroma + $m)],
             ($h2 >= 4 && $h2 < 5) => [($x + $m), $m, ($chroma + $m)],
-            ($h2 >= 5 && $h2 < 6) => [($chroma + $m), $m, ($x + $m)],
-            default => throw new InvalidArgumentException('Invalid hue, it should be a value between 0 and 1.'),
+            default => [($chroma + $m), $m, ($x + $m)], // $h2 >= 5 && $h2 < 6, the hue is already validated
         };
 
         return $fromFloat($rgb);

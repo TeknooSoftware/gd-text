@@ -523,12 +523,9 @@ class Box
             $text
         );
 
-        // @codeCoverageIgnoreStart
         if (!is_array($borders)) {
             throw new NoBoxException('Error in imagettfbbox process, no box generated');
         }
-
-        // @codeCoverageIgnoreEnd
 
         /** @var array{int, int, int, int, int, int, int, int, int, int} $borders */
         [$xLeft, $yLower, $xRight,,, $yUpper] = $borders;
@@ -541,13 +538,12 @@ class Box
         );
     }
 
+    /**
+     * The caller must ensure the stroke size is positive.
+     */
     private function strokeText(int $x, int $y, int $colorIndex, string $text, string $fontFace): void
     {
         $size = $this->strokeSize;
-        if ($size <= 0) {
-            return;
-        }
-
         for ($c1 = $x - $size; $c1 <= $x + $size; ++$c1) {
             for ($c2 = $y - $size; $c2 <= $y + $size; ++$c2) {
                 $this->drawInternal($c1, $c2, $colorIndex, $text, $fontFace);

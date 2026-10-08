@@ -198,4 +198,19 @@ class BoxTest extends AbstractTestCase
 
         $this->assertCount(1, $attributes);
     }
+
+    public function testDrawWithMissingFontFileThrowsNoBoxException(): void
+    {
+        $box = new Box($this->openImageResource('owl_png24.png'))
+            ->setFontFace(__DIR__ . '/missing-font.ttf');
+
+        // GD emits a warning before returning false, it is not the subject of this test
+        set_error_handler(static fn (): bool => true, E_WARNING);
+        try {
+            $this->expectException(\GDText\Exception\NoBoxException::class);
+            $box->draw('foo');
+        } finally {
+            restore_error_handler();
+        }
+    }
 }
