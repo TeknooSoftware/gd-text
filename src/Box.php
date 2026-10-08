@@ -361,7 +361,7 @@ class Box
             $xMOD = $this->box->getX() + $xAlign;
             $yMOD = $this->box->getY() + $yAlign + $yShift + ($n * $lineHeightPx);
 
-            if ($draw && !empty($line) && null !== $this->backgroundColor) {
+            if ($draw && '' !== $line && null !== $this->backgroundColor) {
                 // Marks whole texbox area with given background-color
                 $backgroundHeight = $this->fontSize;
 
