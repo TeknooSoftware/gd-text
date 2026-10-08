@@ -191,4 +191,11 @@ class BoxTest extends AbstractTestCase
                 ->setLineHeight(0.5)
         );
     }
+
+    public function testCalculateIsMarkedNoDiscard(): void
+    {
+        $attributes = new \ReflectionMethod(Box::class, 'calculate')->getAttributes(\NoDiscard::class);
+
+        $this->assertCount(1, $attributes);
+    }
 }

@@ -185,6 +185,7 @@ class Color
     /**
      * @return int[]
      */
+    #[\NoDiscard]
     public function toArray(): array
     {
         return [$this->red, $this->green, $this->blue];

@@ -81,7 +81,7 @@ class TextDebugTest extends AbstractTestCase
         $box->enableDebug();
 
         $before = $this->hashImage($im);
-        $box->calculate('Owls are birds from the order Strigiformes, which includes about 200 species.');
+        (void) $box->calculate('Owls are birds from the order Strigiformes, which includes about 200 species.');
 
         $this->assertSame($before, $this->hashImage($im), 'calculate() must not alter the image');
     }

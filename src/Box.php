@@ -38,6 +38,7 @@ use GDText\Struct\Rectangle;
 use InvalidArgumentException;
 
 use function abs;
+use function array_first;
 use function ceil;
 use function count;
 use function explode;
@@ -309,6 +310,7 @@ class Box
      * Get the area that will cover the given text.
      * @throws Exception
      */
+    #[\NoDiscard('calculate() only measures the text, the returned area is the result')]
     public function calculate(string $text): Rectangle
     {
         return $this->drawText($text, false);
@@ -468,7 +470,7 @@ class Box
         foreach ($explicitLines as $line) {
             // Check every line if it needs to be wrapped
             $words = explode(' ', $line);
-            $line = $words[0];
+            $line = array_first($words);
             $countOfWords = count($words);
 
             for ($i = 1; $i < $countOfWords; ++$i) {
