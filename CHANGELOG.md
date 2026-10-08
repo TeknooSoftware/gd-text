@@ -1,7 +1,5 @@
 # Teknoo Software - Gd-Text - Change Log
 
-Each release lists its changes by type, only the types with entries are present:
-`Security`, `Evolution`, `Documentation` and `Fix`.
 
 ## [4.0.0] - 2026-10-08
 ### Stable Release
