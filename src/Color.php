@@ -107,6 +107,17 @@ class Color
 
     public static function fromHsl(float $h, float $s, float $l): self
     {
+        foreach (['hue' => $h, 'saturation' => $s, 'lightness' => $l] as $name => $v) {
+            if ($v < 0 || $v > 1) {
+                throw new InvalidArgumentException("Invalid $name, it should be a value between 0 and 1.");
+            }
+        }
+
+        // A hue of 1 is the same angle as a hue of 0
+        if (1.0 === $h) {
+            $h = 0.0;
+        }
+
         $fromFloat = static function (array $rgb): Color {
             /** @var int[] $rgb */
             foreach ($rgb as &$v) {

@@ -227,4 +227,35 @@ class ColorTest extends AbstractTestCase
         $this->expectException(InvalidArgumentException::class);
         Color::parseString($value);
     }
+
+    public function testFromHslWithHueOneIsSameAsHueZero(): void
+    {
+        $this->assertSame(
+            Color::fromHsl(0.0, 0.5, 0.5)->toArray(),
+            Color::fromHsl(1.0, 0.5, 0.5)->toArray(),
+        );
+        $this->assertSame([255, 0, 0], Color::fromHsl(1.0, 1.0, 0.5)->toArray());
+        $this->assertSame([128, 128, 128], Color::fromHsl(1.0, 0.0, 0.5)->toArray());
+    }
+
+    public static function provideInvalidHsl(): array
+    {
+        return [
+            'hue above 1' => [1.5, 0.5, 0.5, 'hue'],
+            'negative hue' => [-0.1, 0.5, 0.5, 'hue'],
+            'saturation above 1' => [0.5, 2.0, 0.5, 'saturation'],
+            'negative saturation' => [0.5, -0.5, 0.5, 'saturation'],
+            'lightness above 1' => [0.5, 0.5, 1.5, 'lightness'],
+            'negative lightness' => [0.5, 0.5, -1.0, 'lightness'],
+            'grey with lightness above 1' => [0.5, 0.0, 1.5, 'lightness'],
+        ];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidHsl')]
+    public function testFromHslRejectsOutOfRangeComponents(float $h, float $s, float $l, string $component): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/' . $component . '/i');
+        Color::fromHsl($h, $s, $l);
+    }
 }
