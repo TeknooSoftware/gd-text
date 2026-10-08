@@ -141,4 +141,54 @@ class BoxTest extends AbstractTestCase
 
         $this->assertGreaterThan(0, $drawn, 'Text must be drawn with the closest color, not with palette index 0');
     }
+
+    public function testSetFontSize(): void
+    {
+        $this->assertInstanceOf(
+            Box::class,
+            new Box($this->openImageResource('owl_png24.png'))
+                ->setFontSize(1)
+        );
+    }
+
+    public static function provideInvalidFontSizes(): array
+    {
+        return [
+            'zero' => [0],
+            'negative' => [-5],
+        ];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidFontSizes')]
+    public function testSetFontSizeRejectsNonPositiveValues(int $size): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        new Box($this->openImageResource('owl_png24.png'))
+            ->setFontSize($size);
+    }
+
+    public static function provideInvalidLineHeights(): array
+    {
+        return [
+            'zero' => [0.0],
+            'negative' => [-1.0],
+        ];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidLineHeights')]
+    public function testSetLineHeightRejectsNonPositiveValues(float $lineHeight): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        new Box($this->openImageResource('owl_png24.png'))
+            ->setLineHeight($lineHeight);
+    }
+
+    public function testSetLineHeightAcceptsSmallPositiveValues(): void
+    {
+        $this->assertInstanceOf(
+            Box::class,
+            new Box($this->openImageResource('owl_png24.png'))
+                ->setLineHeight(0.5)
+        );
+    }
 }

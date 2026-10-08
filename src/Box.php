@@ -123,6 +123,10 @@ class Box
 
     public function setFontSize(int $v): self
     {
+        if ($v < 1) {
+            throw new InvalidArgumentException('Font size must be greater than or equal to 1.');
+        }
+
         $this->fontSize = $v;
 
         return $this;
@@ -168,6 +172,10 @@ class Box
 
     public function setLineHeight(float $v): self
     {
+        if ($v <= 0) {
+            throw new InvalidArgumentException('Line height must be greater than 0.');
+        }
+
         $this->lineHeight = $v;
 
         return $this;
