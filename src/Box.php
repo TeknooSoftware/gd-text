@@ -319,7 +319,7 @@ class Box
             TextWrapping::WrapWithOverflow => $this->wrapTextWithOverflow($text, $this->fontFace),
         };
 
-        if ($this->debug) {
+        if ($draw && $this->debug) {
             // Marks whole texbox area with color
             $this->drawFilledRectangle(
                 $this->box,
@@ -380,7 +380,7 @@ class Box
                 );
             }
 
-            if ($this->debug) {
+            if ($draw && $this->debug) {
                 // Marks current line with color
                 $this->drawFilledRectangle(
                     new Rectangle(

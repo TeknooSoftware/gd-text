@@ -65,4 +65,36 @@ class TextDebugTest extends AbstractTestCase
 
         $this->assertInstanceOf(Rectangle::class, $box->draw('Owls are birds from the order Strigiformes, which includes about 200 species.'));
     }
+
+    private function hashImage(\GdImage $im): string
+    {
+        ob_start();
+        imagepng($im);
+
+        return hash('sha256', (string) ob_get_clean());
+    }
+
+    public function testCalculateDoesNotDrawInDebugMode(): void
+    {
+        $im = $this->openImageResource('owl_png24.png');
+        $box = $this->mockBox($im);
+        $box->enableDebug();
+
+        $before = $this->hashImage($im);
+        $box->calculate('Owls are birds from the order Strigiformes, which includes about 200 species.');
+
+        $this->assertSame($before, $this->hashImage($im), 'calculate() must not alter the image');
+    }
+
+    public function testDrawStillDrawsInDebugMode(): void
+    {
+        $im = $this->openImageResource('owl_png24.png');
+        $box = $this->mockBox($im);
+        $box->enableDebug();
+
+        $before = $this->hashImage($im);
+        $box->draw('Owls are birds');
+
+        $this->assertNotSame($before, $this->hashImage($im));
+    }
 }
