@@ -246,6 +246,9 @@ class Box
         $rectangle = $this->calculate($text);
 
         $precision = abs($precision);
+        if (0 === $precision) {
+            throw new InvalidArgumentException('Precision must not be 0.');
+        }
 
         if ($rectangle->getHeight() > $this->box->getHeight() || $rectangle->getWidth() > $this->box->getWidth()) {
             // Decrement font size

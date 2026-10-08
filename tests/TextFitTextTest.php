@@ -83,4 +83,13 @@ class TextFitTextTest extends AbstractTestCase
 
         $this->assertImageEquals('test_wrap_fit_text_decrease.png', $im);
     }
+
+    public function testFitTextWithZeroPrecisionIsRejected(): void
+    {
+        $im = $this->openImageResource('owl_png24.png');
+        $box = $this->mockBox($im);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $box->drawFitFontSize('Owls are birds', 0, 40, 5);
+    }
 }
