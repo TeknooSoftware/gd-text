@@ -258,4 +258,36 @@ class ColorTest extends AbstractTestCase
         $this->expectExceptionMessageMatches('/' . $component . '/i');
         Color::fromHsl($h, $s, $l);
     }
+
+    private function buildFullPaletteImage(): \GdImage
+    {
+        $im = imagecreate(16, 16);
+        for ($i = 0; $i < 256; ++$i) {
+            imagecolorallocate($im, $i, 0, 0);
+        }
+
+        return $im;
+    }
+
+    public function testFullPaletteImageReturnsClosestColorIndex(): void
+    {
+        $im = $this->buildFullPaletteImage();
+
+        $index = (new Color(200, 0, 0))->getIndex($im);
+        $this->assertIsInt($index);
+        $this->assertSame(['red' => 200, 'green' => 0, 'blue' => 0, 'alpha' => 0], imagecolorsforindex($im, $index));
+
+        $index = (new Color(0, 255, 0))->getIndex($im);
+        $this->assertIsInt($index);
+        $this->assertGreaterThanOrEqual(0, $index);
+    }
+
+    public function testFullPaletteImageWithAlphaReturnsClosestColorIndex(): void
+    {
+        $im = $this->buildFullPaletteImage();
+
+        $index = (new Color(0, 255, 0, 50))->getIndex($im);
+        $this->assertIsInt($index);
+        $this->assertGreaterThanOrEqual(0, $index);
+    }
 }

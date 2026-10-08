@@ -31,10 +31,8 @@ use GdImage;
 use InvalidArgumentException;
 
 use function hexdec;
-use function imagecolorallocate;
-use function imagecolorallocatealpha;
-use function imagecolorexact;
-use function imagecolorexactalpha;
+use function imagecolorresolve;
+use function imagecolorresolvealpha;
 use function preg_match;
 use function str_repeat;
 use function strlen;
@@ -154,34 +152,15 @@ class Color
     }
 
     /**
-     * @return int|false Returns the index of the specified color+alpha in the palette of the image,
-     *             or index of allocated color if the color does not exist in the image's palette.
+     * Returns the index of the specified color+alpha in the palette of the image. If the color does not exist in
+     * the image's palette, it is allocated. If the palette is full, the index of the closest color is returned.
+     *
+     * @return int|false Kept as int|false for backward compatibility, but false is never returned anymore.
      */
     public function getIndex(GdImage $image): int|false
     {
         if ($this->hasAlphaChannel()) {
-            $index = imagecolorexactalpha(
-                $image,
-                $this->red,
-                $this->green,
-                $this->blue,
-                (int) $this->alpha
-            );
-        } else {
-            $index = imagecolorexact(
-                $image,
-                $this->red,
-                $this->green,
-                $this->blue
-            );
-        }
-
-        if (-1 !== $index) {
-            return $index;
-        }
-
-        if ($this->hasAlphaChannel()) {
-            return imagecolorallocatealpha(
+            return imagecolorresolvealpha(
                 $image,
                 $this->red,
                 $this->green,
@@ -190,7 +169,7 @@ class Color
             );
         }
 
-        return imagecolorallocate(
+        return imagecolorresolve(
             $image,
             $this->red,
             $this->green,

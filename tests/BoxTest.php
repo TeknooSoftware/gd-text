@@ -114,4 +114,31 @@ class BoxTest extends AbstractTestCase
         new Box($this->openImageResource('owl_png24.png'))
             ->draw('foo');
     }
+
+    public function testDrawOnFullPaletteImage(): void
+    {
+        $im = imagecreate(200, 60);
+        $background = imagecolorallocate($im, 255, 255, 255);
+        for ($i = 1; $i < 256; ++$i) {
+            imagecolorallocate($im, 255, 255, 255 - $i);
+        }
+
+        $box = new Box($im);
+        $box->setFontFace(__DIR__ . '/LinLibertine_R.ttf');
+        $box->setFontSize(40);
+        $box->setFontColor(new Color(0, 0, 0));
+        $box->setBox(0, 0, 200, 60);
+        $rectangle = $box->draw('Owl');
+
+        $drawn = 0;
+        for ($x = $rectangle->getLeft(); $x < $rectangle->getRight(); ++$x) {
+            for ($y = $rectangle->getTop(); $y < $rectangle->getBottom(); ++$y) {
+                if (imagecolorat($im, $x, $y) !== $background) {
+                    ++$drawn;
+                }
+            }
+        }
+
+        $this->assertGreaterThan(0, $drawn, 'Text must be drawn with the closest color, not with palette index 0');
+    }
 }
