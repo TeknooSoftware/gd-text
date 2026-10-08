@@ -1,5 +1,25 @@
 # Teknoo Software - Gd-Text - Change Log
 
+## [4.0.0] - 2026-10-08
+### Stable Release
+- Drop support of PHP 8.4
+- Requires PHP 8.5
+- Use `#[\NoDiscard]` on `Box::calculate()` and `Color::toArray()`
+- Remove unused dev dependency `symfony/property-access`
+- Fix `Color::parseString()` to reject non hexadecimal strings instead of parsing them as black with a deprecation
+- Fix `Color::fromHsl()` with a hue of 1.0 and reject saturation or lightness outside `[0, 1]` with a clear message
+- Fix `Color::getIndex()` on images with a full palette: the closest color is used instead of the palette index 0
+- Fix missing line background for the text `"0"`
+- Fix `Box::calculate()` drawing debug rectangles in debug mode
+- Fix infinite loop in `Box::drawFitFontSize()` with a precision of 0 (an `InvalidArgumentException` is raised)
+- Fix endless decrement in `Box::drawFitFontSize()` for a text that never fits (the font size is never lower than 1)
+- Fix off-by-one font sizes in `Box::drawFitFontSize()`: without maximum the text now grows until it fills the box,
+  the maximum and minimum font sizes are reachable, the initial font size is clamped to the `[min, max]` range
+- `Box::setFontSize()` rejects values lower than 1, `Box::setLineHeight()` rejects values lower or equal to 0
+- Resolve colors' indexes once per drawing instead of once per stroke pixel
+- Fix documentation (README examples used strings instead of enums, requirements, API overview, security notes)
+- Remove unused reference images for GD 2.3.3 (tests use the GD 2.3.0 references for all GD 2.3.x)
+
 ## [3.0.1] - 2025-12-02
 ### Stable Release
 - Update dev libraries
