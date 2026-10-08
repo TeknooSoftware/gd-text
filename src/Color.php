@@ -35,8 +35,8 @@ use function imagecolorallocate;
 use function imagecolorallocatealpha;
 use function imagecolorexact;
 use function imagecolorexactalpha;
+use function preg_match;
 use function str_repeat;
-use function str_replace;
 use function strlen;
 use function substr;
 
@@ -84,17 +84,19 @@ class Color
      */
     public static function parseString(string $str): self
     {
-        $str = str_replace('#', '', $str);
-        if (6 === strlen($str)) {
-            $r = (int) hexdec(substr($str, 0, 2));
-            $g = (int) hexdec(substr($str, 2, 2));
-            $b = (int) hexdec(substr($str, 4, 2));
-        } elseif (3 === strlen($str)) {
-            $r = (int) hexdec(str_repeat($str[0], 2));
-            $g = (int) hexdec(str_repeat($str[1], 2));
-            $b = (int) hexdec(str_repeat($str[2], 2));
-        } else {
+        if (1 !== preg_match('/^#?(?<hex>[0-9a-f]{3}|[0-9a-f]{6})$/i', $str, $matches)) {
             throw new InvalidArgumentException('Unrecognized color.');
+        }
+
+        $hex = $matches['hex'];
+        if (6 === strlen($hex)) {
+            $r = (int) hexdec(substr($hex, 0, 2));
+            $g = (int) hexdec(substr($hex, 2, 2));
+            $b = (int) hexdec(substr($hex, 4, 2));
+        } else {
+            $r = (int) hexdec(str_repeat($hex[0], 2));
+            $g = (int) hexdec(str_repeat($hex[1], 2));
+            $b = (int) hexdec(str_repeat($hex[2], 2));
         }
 
         /** @var int<0, 255> $r */

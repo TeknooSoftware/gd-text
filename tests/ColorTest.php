@@ -205,4 +205,26 @@ class ColorTest extends AbstractTestCase
         $this->expectException(InvalidArgumentException::class);
         Color::parseString('oooooopp');
     }
+
+    public static function provideInvalidColorStrings(): array
+    {
+        return [
+            'non hex 6 chars' => ['zzzzzz'],
+            'non hex 3 chars with hash' => ['#GGG'],
+            'hash in the middle' => ['#ab#c'],
+            'double hash' => ['##abc'],
+            'empty string' => [''],
+            'only hash' => ['#'],
+            'too short' => ['#ab'],
+            'too long' => ['#abcdefa'],
+            'spaces' => [' abc '],
+        ];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidColorStrings')]
+    public function testParseStringRejectsNonHexadecimalStrings(string $value): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        Color::parseString($value);
+    }
 }
